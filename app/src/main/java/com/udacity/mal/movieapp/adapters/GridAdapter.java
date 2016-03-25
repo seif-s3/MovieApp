@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.mal.movieapp.R;
@@ -43,9 +44,18 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.PosterViewHold
     }
 
     @Override
-    public void onBindViewHolder(PosterViewHolder holder, int position)
+    public void onBindViewHolder(PosterViewHolder holder, final int position)
     {
         ImageView poster = holder.posterHolder;
+        poster.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                // TODO: Launch Detail Activity from here
+                Toast.makeText(mContext, mMovies.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+            }
+        });
         Picasso.with(mContext).load(ApiParams.BASE_IMG_URL + mMovies.get(position).getPoster_path()).into(poster);
     }
 
