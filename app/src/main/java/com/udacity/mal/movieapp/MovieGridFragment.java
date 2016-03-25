@@ -78,12 +78,11 @@ public class MovieGridFragment extends Fragment
                 mMovieList.clear();
                 JSONObject responseJson = new JSONObject(json);
                 JSONArray resultsArray = responseJson.getJSONArray("results");
-                for(int i=0;i<resultsArray.length(); i++)
+                for (int i = 0; i < resultsArray.length(); i++)
                 {
                     mMovieList.add(new Movie(resultsArray.getJSONObject(i)));
                 }
-            }
-            catch (JSONException e)
+            } catch (JSONException e)
             {
                 Log.e(LOG_TAG, "Parsing JSON failed");
                 e.printStackTrace();
@@ -94,7 +93,7 @@ public class MovieGridFragment extends Fragment
         protected Void doInBackground(String... params)
         {
             // Params might either be Popular or Top Rated
-            if(params.length == 0)
+            if (params.length == 0)
             {
                 return null;
             }
@@ -120,17 +119,20 @@ public class MovieGridFragment extends Fragment
                 // Read the input stream into a String
                 InputStream inputStream = urlConnection.getInputStream();
                 StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
+                if (inputStream == null)
+                {
                     return null;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));
 
                 String line;
-                while ((line = reader.readLine()) != null) {
+                while ((line = reader.readLine()) != null)
+                {
                     buffer.append(line + "\n");
                 }
 
-                if (buffer.length() == 0) {
+                if (buffer.length() == 0)
+                {
                     // Stream was empty.  No point in parsing.
                     return null;
                 }
@@ -138,20 +140,23 @@ public class MovieGridFragment extends Fragment
                 Log.v(LOG_TAG, moviesJsonStr.toString());
 
                 parseMovieJson(moviesJsonStr);
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
-            }
-            finally {
-                if (urlConnection != null) {
+            } finally
+            {
+                if (urlConnection != null)
+                {
                     urlConnection.disconnect();
                 }
-                if (reader != null) {
-                    try {
+                if (reader != null)
+                {
+                    try
+                    {
                         reader.close();
-                    } catch (final IOException e) {
+                    } catch (final IOException e)
+                    {
                         Log.e(LOG_TAG, "Error closing stream", e);
                     }
                 }

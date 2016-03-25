@@ -21,6 +21,7 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.PosterViewHold
 {
     private Context mContext;
     public ArrayList<Movie> mMovies;
+
     public GridAdapter(Context ctx, ArrayList<Movie> movies)
     {
         mContext = ctx;
@@ -54,9 +55,11 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.PosterViewHold
         return mMovies.size();
     }
 
-    public static class PosterViewHolder extends RecyclerView.ViewHolder{
+    public static class PosterViewHolder extends RecyclerView.ViewHolder
+    {
 
         ImageView posterHolder;
+
         public PosterViewHolder(View itemView)
         {
             super(itemView);

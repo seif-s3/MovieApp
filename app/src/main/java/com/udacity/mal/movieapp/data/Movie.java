@@ -40,7 +40,7 @@ public class Movie
             // Converting Genre IDs JSONArray to Integer Array
             JSONArray genreTemp = m.getJSONArray(ApiParams.GENRE_IDS_KEY);
             this.genre_ids = new Integer[genreTemp.length()];
-            for(int i=0;i<genreTemp.length(); i++)
+            for (int i = 0; i < genreTemp.length(); i++)
             {
                 genre_ids[i] = genreTemp.getInt(i);
             }
@@ -54,8 +54,7 @@ public class Movie
             this.setVideo(m.getBoolean(ApiParams.VIDEO_KEY));
             this.setVote_average(m.getDouble(ApiParams.VOTE_AVG_KEY));
 
-        }
-        catch(JSONException e)
+        } catch (JSONException e)
         {
             Log.e(LOG_TAG, "ERROR Parsing JSON Object");
             e.printStackTrace();
