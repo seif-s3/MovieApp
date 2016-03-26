@@ -124,10 +124,15 @@ public class MovieGridFragment extends Fragment implements AdapterView.OnItemSel
         Log.i("SpinnerItemSelected", sortBy);
         if (sortBy.equals("Top Rated"))
         {
+            // TODO: Refactor Keys and Values from R.string to Static class variables
+            editor.putString(getString(R.string.sort_order_shared_pref_key), getString(R.string.top_rated_key));
+            editor.commit();
             refreshMovieList(getString(R.string.top_rated_key));
         }
         else if (sortBy.equals("Most Popular"))
         {
+            editor.putString(getString(R.string.sort_order_shared_pref_key), getString(R.string.most_popular_key));
+            editor.commit();
             refreshMovieList(getString(R.string.most_popular_key));
         }
     }
