@@ -1,5 +1,7 @@
 package com.udacity.mal.movieapp;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +14,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import com.udacity.mal.movieapp.adapters.GridAdapter;
 import com.udacity.mal.movieapp.data.Movie;
@@ -28,13 +33,16 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class MovieGridFragment extends Fragment
+public class MovieGridFragment extends Fragment implements AdapterView.OnItemSelectedListener
 {
     public static final String LOG_TAG = "MOVIE_GRID_FRAGMENT";
     private GridAdapter mGridAdapter;
     private ArrayList<Movie> mMovieList = new ArrayList<>();
     private SwipeRefreshLayout mSwipeContainer;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor editor;
 
     public MovieGridFragment()
     {
@@ -50,8 +58,6 @@ public class MovieGridFragment extends Fragment
             case R.id.action_settings:
                 // TODO: Launch
                 return true;
-            case R.id.refresh_movie_list:
-                refreshMovieList();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -60,21 +66,35 @@ public class MovieGridFragment extends Fragment
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        sharedPref = getContext().getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
     }
 
-    public void refreshMovieList()
+    public void refreshMovieList(String sortOrder)
     {
-        new FetchMoviesTask().execute("top_rated");
+        new FetchMoviesTask().execute(sortOrder);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        refreshMovieList();
+
+        refreshMovieList(sharedPref.getString(
+                getString(R.string.sort_order_shared_pref_key), getString(R.string.most_popular_key)
+        ));
+
         // Inflate the layout for this fragment
-        mGridAdapter = new GridAdapter(getContext(), mMovieList);
         View fragView = inflater.inflate(R.layout.fragment_movie_grid, container, false);
+
+        // Initialize Spinner
+        Spinner spinner = (Spinner) fragView.findViewById(R.id.sort_pref_spinner);
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.sort_prefrences_array, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerAdapter);
+        spinner.setOnItemSelectedListener(this);
         // Initialize Swipe Menu
         mSwipeContainer = (SwipeRefreshLayout) fragView.findViewById(R.id.swipePosterContainer);
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
@@ -82,16 +102,42 @@ public class MovieGridFragment extends Fragment
             @Override
             public void onRefresh()
             {
-                refreshMovieList();
+                refreshMovieList(sharedPref.getString(
+                        getString(R.string.sort_order_shared_pref_key), getString(R.string.most_popular_key)
+                ));
             }
         });
+
         // Initialize Recycler View
+        mGridAdapter = new GridAdapter(getContext(), mMovieList);
         RecyclerView thumbnailsGrid = (RecyclerView) fragView.findViewById(R.id.thumbnails_grid);
         thumbnailsGrid.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         thumbnailsGrid.setAdapter(mGridAdapter);
         return fragView;
 
     }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+    {
+        String sortBy = (String) parent.getItemAtPosition(position);
+        Log.i("SpinnerItemSelected", sortBy);
+        if (sortBy.equals("Top Rated"))
+        {
+            refreshMovieList(getString(R.string.top_rated_key));
+        }
+        else if (sortBy.equals("Most Popular"))
+        {
+            refreshMovieList(getString(R.string.most_popular_key));
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent)
+    {
+
+    }
+
 
     private class FetchMoviesTask extends AsyncTask<String, Void, Void>
     {
@@ -126,6 +172,10 @@ public class MovieGridFragment extends Fragment
             }
             String orderType = params[0];
 
+            HashMap<String, String> orderEndpoints = new HashMap<>();
+            orderEndpoints.put("top_rated", ApiParams.TOP_RATED_ENDPOINT);
+            orderEndpoints.put("most_popular", ApiParams.POPULAR_ENDPOINT);
+
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
@@ -133,12 +183,12 @@ public class MovieGridFragment extends Fragment
 
             try
             {
-                Uri builtUri = Uri.parse(ApiParams.MOVIES_BASE_URL + ApiParams.POPULAR_ENDPOINT).buildUpon()
+                Uri builtUri = Uri.parse(ApiParams.MOVIES_BASE_URL + orderEndpoints.get(orderType)).buildUpon()
                         .appendQueryParameter(ApiParams.API_KEY_PARAM, ApiParams.API_KEY)
                         .build();
 
                 URL url = new URL(builtUri.toString());
-
+                Log.i("API_URL", url.toString());
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
