@@ -4,10 +4,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -32,12 +34,27 @@ public class MovieGridFragment extends Fragment
     public static final String LOG_TAG = "MOVIE_GRID_FRAGMENT";
     private GridAdapter mGridAdapter;
     private ArrayList<Movie> mMovieList = new ArrayList<>();
+    private SwipeRefreshLayout mSwipeContainer;
 
     public MovieGridFragment()
     {
         setHasOptionsMenu(true);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        int id = item.getItemId();
+        switch (id)
+        {
+            case R.id.action_settings:
+                // TODO: Launch
+                return true;
+            case R.id.refresh_movie_list:
+                refreshMovieList();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -58,7 +75,17 @@ public class MovieGridFragment extends Fragment
         // Inflate the layout for this fragment
         mGridAdapter = new GridAdapter(getContext(), mMovieList);
         View fragView = inflater.inflate(R.layout.fragment_movie_grid, container, false);
-
+        // Initialize Swipe Menu
+        mSwipeContainer = (SwipeRefreshLayout) fragView.findViewById(R.id.swipePosterContainer);
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+        {
+            @Override
+            public void onRefresh()
+            {
+                refreshMovieList();
+            }
+        });
+        // Initialize Recycler View
         RecyclerView thumbnailsGrid = (RecyclerView) fragView.findViewById(R.id.thumbnails_grid);
         thumbnailsGrid.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         thumbnailsGrid.setAdapter(mGridAdapter);
@@ -168,6 +195,7 @@ public class MovieGridFragment extends Fragment
         protected void onPostExecute(Void aVoid)
         {
             mGridAdapter.notifyDataSetChanged();
+            mSwipeContainer.setRefreshing(false);
         }
     }
 }

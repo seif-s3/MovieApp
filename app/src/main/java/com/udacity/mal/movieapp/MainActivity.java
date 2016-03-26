@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_settings:
                 // TODO: Launch
                 return true;
-
         }
         return super.onOptionsItemSelected(item);
     }
