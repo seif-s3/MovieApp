@@ -1,6 +1,7 @@
 package com.udacity.mal.movieapp.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+import com.udacity.mal.movieapp.DetailActivity;
 import com.udacity.mal.movieapp.R;
 import com.udacity.mal.movieapp.data.Movie;
 import com.udacity.mal.movieapp.utilities.ApiParams;
@@ -65,6 +67,10 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.PosterViewHold
             {
                 // TODO: Launch Detail Activity from here
                 Toast.makeText(mContext, mMovies.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+                Intent detail = new Intent(mContext, DetailActivity.class);
+                detail.putExtra("MOVIE", mMovies.get(position));
+                mContext.startActivity(detail);
+
             }
         });
         movieTitle.setText(mMovies.get(position).getTitle());

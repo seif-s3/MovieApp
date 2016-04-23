@@ -1,5 +1,7 @@
 package com.udacity.mal.movieapp.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.udacity.mal.movieapp.utilities.ApiParams;
@@ -11,7 +13,7 @@ import org.json.JSONObject;
 /**
  * Created by Seif3 on 3/25/2016.
  */
-public class Movie
+public class Movie implements Parcelable
 {
     public static final String LOG_TAG = "MOVIE_CLASS";
     private Integer id;
@@ -20,14 +22,68 @@ public class Movie
     private String backdrop_path;
     private String release_date;
     private Double vote_average;
-    private Integer[] genre_ids;
+    private int[] genre_ids;
     private String title;
     private String original_title;
     private String original_language;
     private Double popularity;
-    private Boolean video;
-    private Boolean adult;
+    private boolean video;
+    private boolean adult;
     private Integer vote_count;
+
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags)
+    {
+        dest.writeInt(this.id);
+        dest.writeString(this.overview);
+        dest.writeString(this.poster_path);
+        dest.writeString(this.backdrop_path);
+        dest.writeString(this.release_date);
+        dest.writeDouble(this.vote_average);
+        dest.writeIntArray(this.genre_ids);
+        dest.writeString(this.title);
+        dest.writeString(this.original_title);
+        dest.writeString(this.original_language);
+        dest.writeDouble(this.popularity);
+        dest.writeByte((byte) (this.video == true ? 1 : 0));
+        dest.writeByte((byte) (this.adult == true ? 1 : 0));
+        dest.writeInt(this.vote_count);
+    }
+
+    public Movie(Parcel in)
+    {
+        this.id = in.readInt();
+        this.overview = in.readString();
+        this.poster_path = in.readString();
+        this.backdrop_path = in.readString();
+        this.release_date = in.readString();
+        this.vote_average = in.readDouble();
+        this.genre_ids = in.createIntArray();
+        this.title = in.readString();
+        this.original_title = in.readString();
+        this.original_language = in.readString();
+        this.popularity = in.readDouble();
+        this.video = in.readByte() == 1;
+        this.adult = in.readByte() == 1;
+        this.vote_count = in.readInt();
+    }
+
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>()
+    {
+
+        @Override
+        public Movie createFromParcel(Parcel source)
+        {
+            return new Movie(source);
+        }
+
+        @Override
+        public Movie[] newArray(int size)
+        {
+            return new Movie[size];
+        }
+    };
 
     public Movie(JSONObject m)
     {
@@ -39,7 +95,7 @@ public class Movie
             this.setRelease_date(m.getString(ApiParams.RELEASE_DATE_KEY));
             // Converting Genre IDs JSONArray to Integer Array
             JSONArray genreTemp = m.getJSONArray(ApiParams.GENRE_IDS_KEY);
-            this.genre_ids = new Integer[genreTemp.length()];
+            this.genre_ids = new int[genreTemp.length()];
             for (int i = 0; i < genreTemp.length(); i++)
             {
                 genre_ids[i] = genreTemp.getInt(i);
@@ -121,12 +177,12 @@ public class Movie
         this.vote_average = vote_verage;
     }
 
-    public Integer[] getGenre_ids()
+    public int[] getGenre_ids()
     {
         return genre_ids;
     }
 
-    public void setGenre_ids(Integer[] genre_ids)
+    public void setGenre_ids(int[] genre_ids)
     {
         this.genre_ids = genre_ids;
     }
@@ -199,5 +255,11 @@ public class Movie
     public void setVote_count(Integer vote_count)
     {
         this.vote_count = vote_count;
+    }
+
+    @Override
+    public int describeContents()
+    {
+        return 0;
     }
 }

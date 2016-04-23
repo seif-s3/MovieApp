@@ -16,4 +16,5 @@
     <string name="top_rated_key">top_rated</string>
     <string name="most_popular_key">most_popular</string>
     <string name="poster_content_description">Movie Poster Image</string>
+    <string name="title_activity_detail">Movie Details</string>
 </resources>
