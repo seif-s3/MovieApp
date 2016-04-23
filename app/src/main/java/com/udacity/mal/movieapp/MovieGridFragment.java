@@ -89,6 +89,7 @@ public class MovieGridFragment extends Fragment implements AdapterView.OnItemSel
         View fragView = inflater.inflate(R.layout.fragment_movie_grid, container, false);
 
         // Initialize Spinner
+        // TODO: Move spinner to actionbar
         Spinner spinner = (Spinner) fragView.findViewById(R.id.sort_pref_spinner);
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.sort_prefrences_array, android.R.layout.simple_spinner_item);
@@ -113,6 +114,7 @@ public class MovieGridFragment extends Fragment implements AdapterView.OnItemSel
         RecyclerView thumbnailsGrid = (RecyclerView) fragView.findViewById(R.id.thumbnails_grid);
         thumbnailsGrid.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         thumbnailsGrid.setAdapter(mGridAdapter);
+
         return fragView;
 
     }

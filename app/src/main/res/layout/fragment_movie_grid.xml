@@ -10,11 +10,9 @@
         android:orientation="vertical">
 
         <Spinner
-            android:layout_width="match_parent"
+            android:layout_width="217dp"
             android:layout_height="48dp"
             android:id="@+id/sort_pref_spinner">
-
-
         </Spinner>
 
         <android.support.v4.widget.SwipeRefreshLayout
@@ -30,6 +28,7 @@
                 android:layout_gravity="center_horizontal"
                 android:scrollbars="vertical"
                 android:id="@+id/thumbnails_grid"
+
                 >
 
             </android.support.v7.widget.RecyclerView>

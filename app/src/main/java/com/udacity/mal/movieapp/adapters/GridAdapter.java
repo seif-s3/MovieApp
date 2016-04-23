@@ -1,11 +1,13 @@
 package com.udacity.mal.movieapp.adapters;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -46,8 +48,17 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.PosterViewHold
     @Override
     public void onBindViewHolder(PosterViewHolder holder, final int position)
     {
+        if (mMovies.size() <= 0)
+        {
+            return;
+        }
+
+        CardView posterCardView = holder.cardViewHolder;
         ImageView poster = holder.posterHolder;
-        poster.setOnClickListener(new View.OnClickListener()
+        TextView movieTitle = holder.titleHolder;
+        TextView date = holder.dateHolder;
+
+        posterCardView.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -56,6 +67,8 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.PosterViewHold
                 Toast.makeText(mContext, mMovies.get(position).getTitle(), Toast.LENGTH_SHORT).show();
             }
         });
+        movieTitle.setText(mMovies.get(position).getTitle());
+        date.setText(mMovies.get(position).getRelease_date().split("-")[0]);
         Picasso.with(mContext).load(ApiParams.BASE_IMG_URL + mMovies.get(position).getPoster_path()).into(poster);
     }
 
@@ -67,13 +80,18 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.PosterViewHold
 
     public static class PosterViewHolder extends RecyclerView.ViewHolder
     {
-
+        CardView cardViewHolder;
         ImageView posterHolder;
+        TextView titleHolder;
+        TextView dateHolder;
 
         public PosterViewHolder(View itemView)
         {
             super(itemView);
+            cardViewHolder = (CardView) itemView.findViewById(R.id.poster_card_view);
             posterHolder = (ImageView) itemView.findViewById(R.id.poster_holder);
+            titleHolder = (TextView) itemView.findViewById(R.id.movie_item_title);
+            dateHolder = (TextView) itemView.findViewById(R.id.movie_item_genres);
         }
     }
 }

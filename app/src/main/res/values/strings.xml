@@ -15,4 +15,5 @@
     <string name="sort_order_shared_pref_key">sort_order</string>
     <string name="top_rated_key">top_rated</string>
     <string name="most_popular_key">most_popular</string>
+    <string name="poster_content_description">Movie Poster Image</string>
 </resources>
