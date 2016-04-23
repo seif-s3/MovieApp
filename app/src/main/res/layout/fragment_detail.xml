@@ -25,12 +25,12 @@
             android:layout_alignParentTop="true">
 
             <ImageView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/movie_detail_backdrop"
                 android:src="@drawable/placeholder_movie_details_image"
                 android:layout_gravity="center_vertical"
-                />
+                android:layout_weight="0.4"/>
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -72,7 +72,7 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="Runtime"
-                        android:id="@+id/movie_detail_runtime"
+                        android:id="@+id/movie_detail_plot"
                         android:padding="4dp"/>
 
                 </LinearLayout>

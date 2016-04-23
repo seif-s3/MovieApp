@@ -21,7 +21,7 @@ public class MovieDetailFragment extends Fragment
     private ImageView mPosterView;
     private TextView mTitleView;
     private TextView mRatingView;
-    private TextView mRuntimeView;
+    private TextView mPlotView;
 
     public MovieDetailFragment()
     {
@@ -40,14 +40,23 @@ public class MovieDetailFragment extends Fragment
         mPosterView = (ImageView) rootView.findViewById(R.id.movie_detail_poster);
         mTitleView = (TextView) rootView.findViewById(R.id.movie_detail_title);
         mRatingView = (TextView) rootView.findViewById(R.id.movie_detail_rating);
-        mRuntimeView = (TextView) rootView.findViewById(R.id.movie_detail_runtime);
+        mPlotView = (TextView) rootView.findViewById(R.id.movie_detail_plot);
 
         Picasso.with(getContext()).load(ApiParams.BASE_IMG_URL + movieDetails.getBackdrop_path()).into(mBackdropView);
         Picasso.with(getContext()).load(ApiParams.BASE_IMG_URL + movieDetails.getPoster_path()).into(mPosterView);
         mTitleView.setText(movieDetails.getTitle());
-        mRatingView.setText(movieDetails.getVote_average().toString());
+        mRatingView.setText(formatRating(movieDetails));
+        mPlotView.setText(movieDetails.getOverview());
 
         return rootView;
+    }
+
+    private String formatRating(Movie m)
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append(m.getVote_average());
+        sb.append("/10.0");
+        return sb.toString();
     }
 
 }
