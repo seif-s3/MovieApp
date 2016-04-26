@@ -8,13 +8,13 @@ import android.provider.BaseColumns;
 /**
  * Created by Seif3 on 4/23/2016.
  */
-public class MovieDbHelper extends SQLiteOpenHelper
+public class MoviesDbHelper extends SQLiteOpenHelper
 {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "movies.db";
     private Context mContext;
 
-    public MovieDbHelper(Context context)
+    public MoviesDbHelper(Context context)
     {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         mContext = context;
@@ -37,6 +37,10 @@ public class MovieDbHelper extends SQLiteOpenHelper
                         + MoviesContract.MoviesColumns.MOVIE_POSTER_PATH + " TEXT,"
                         + MoviesContract.MoviesColumns.MOVIE_RELEASE_DATE + " TEXT,"
                         + MoviesContract.MoviesColumns.MOVIE_FAVORED + " INTEGER NOT NULL DEFAULT 0,"
+                        + MoviesContract.MoviesColumns.MOVIE_ORIGINAL_LANGUAGE + " TEXT,"
+                        + MoviesContract.MoviesColumns.MOVIE_ORIGINAL_TITLE + " TEXT,"
+                        + MoviesContract.MoviesColumns.MOVIE_ADULT + " INT,"
+                        + MoviesContract.MoviesColumns.MOVIE_VIDEO + " INT,"
                         + "UNIQUE (" + MoviesContract.MoviesColumns.MOVIE_ID + ") ON CONFLICT REPLACE)";
 
         db.execSQL(SQL_CREATE_MOVIES_TABLE);

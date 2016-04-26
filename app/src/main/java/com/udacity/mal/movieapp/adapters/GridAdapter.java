@@ -2,6 +2,7 @@ package com.udacity.mal.movieapp.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.mal.movieapp.DetailActivity;
@@ -54,28 +54,37 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.PosterViewHold
         {
             return;
         }
-
-        CardView posterCardView = holder.cardViewHolder;
-        ImageView poster = holder.posterHolder;
-        TextView movieTitle = holder.titleHolder;
-        TextView date = holder.dateHolder;
-
-        posterCardView.setOnClickListener(new View.OnClickListener()
+        else
         {
-            @Override
-            public void onClick(View v)
-            {
-                // TODO: Launch Detail Activity from here
-                Toast.makeText(mContext, mMovies.get(position).getTitle(), Toast.LENGTH_SHORT).show();
-                Intent detail = new Intent(mContext, DetailActivity.class);
-                detail.putExtra("MOVIE", mMovies.get(position));
-                mContext.startActivity(detail);
+            CardView posterCardView = holder.cardViewHolder;
+            ImageView poster = holder.posterHolder;
+            TextView movieTitle = holder.titleHolder;
+            TextView date = holder.dateHolder;
 
-            }
-        });
-        movieTitle.setText(mMovies.get(position).getTitle());
-        date.setText(mMovies.get(position).getRelease_date().split("-")[0]);
-        Picasso.with(mContext).load(ApiParams.BASE_IMG_URL + mMovies.get(position).getPoster_path()).into(poster);
+            // TODO: Handle Tablet mode from here
+            posterCardView.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    //Toast.makeText(mContext, mMovies.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+
+                    // Save clicked item position
+                    SharedPreferences shp = mContext.getSharedPreferences(mContext.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = shp.edit();
+                    editor.putInt(mContext.getString(R.string.poster_grid_position_shared_pref_key), position);
+                    editor.commit();
+
+                    Intent detail = new Intent(mContext, DetailActivity.class);
+                    detail.putExtra("MOVIE", mMovies.get(position));
+                    mContext.startActivity(detail);
+
+                }
+            });
+            movieTitle.setText(mMovies.get(position).getTitle());
+            date.setText(mMovies.get(position).getRelease_date().split("-")[0]);
+            Picasso.with(mContext).load(ApiParams.BASE_IMG_URL + mMovies.get(position).getPoster_path()).into(poster);
+        }
     }
 
     @Override

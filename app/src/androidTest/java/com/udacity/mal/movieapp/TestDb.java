@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 
-import com.udacity.mal.movieapp.provider.MovieDbHelper;
+import com.udacity.mal.movieapp.provider.MoviesDbHelper;
 
 
 /**
@@ -15,7 +15,7 @@ public class TestDb extends AndroidTestCase
 
     void deleteTheDatabase()
     {
-        mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
+        mContext.deleteDatabase(MoviesDbHelper.DATABASE_NAME);
     }
 
     @Override
@@ -26,9 +26,9 @@ public class TestDb extends AndroidTestCase
 
     public void testCreateDb() throws Exception
     {
-        mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
+        mContext.deleteDatabase(MoviesDbHelper.DATABASE_NAME);
 
-        SQLiteDatabase db = new MovieDbHelper(mContext).getWritableDatabase();
+        SQLiteDatabase db = new MoviesDbHelper(mContext).getWritableDatabase();
         assertEquals(true, db.isOpen());
 
         Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);

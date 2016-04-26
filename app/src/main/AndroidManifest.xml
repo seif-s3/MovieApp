@@ -25,6 +25,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.udacity.mal.movieapp.MainActivity"/>
         </activity>
+
+        <provider
+            android:authorities="com.udacity.mal.movieapp.provider"
+            android:name=".provider.MoviesProvider"
+            />
     </application>
 
 </manifest>

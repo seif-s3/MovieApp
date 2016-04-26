@@ -27,6 +27,10 @@ public class MoviesContract
         String MOVIE_FAVORED = "movie_favored";
         String MOVIE_POSTER_PATH = "movie_poster_path";
         String MOVIE_BACKDROP_PATH = "movie_backdrop_path";
+        String MOVIE_ORIGINAL_TITLE = "movie_original_title";
+        String MOVIE_ORIGINAL_LANGUAGE = "movie_original_language";
+        String MOVIE_ADULT = "movie_adult";
+        String MOVIE_VIDEO = "movie_video";
     }
 
 
@@ -41,6 +45,18 @@ public class MoviesContract
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIES;
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIES;
+
+
+        // Build a URI that references all movies
+        public static Uri buildMovieUri()
+        {
+            return CONTENT_URI;
+        }
+
+        public static Uri buildMovieUri(String movieId)
+        {
+            return CONTENT_URI.buildUpon().appendPath(movieId).build();
+        }
 
     }
 

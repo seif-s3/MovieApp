@@ -51,6 +51,11 @@ public class Movie implements Parcelable
         dest.writeInt(this.vote_count);
     }
 
+    public Movie()
+    {
+    }
+
+
     public Movie(Parcel in)
     {
         this.id = in.readInt();

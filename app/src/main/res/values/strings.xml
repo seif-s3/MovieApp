@@ -11,8 +11,12 @@
 
     <string name="preference_file_key">com.udacity.mal.movieapp.PREFERENCE_FILE_KEY</string>
     <string name="sort_order_shared_pref_key">sort_order</string>
+    <string name="spinner_position_shared_pref_key">spinner_pos</string>
+    <string name="poster_grid_position_shared_pref_key">poster_grid_pos</string>
     <string name="top_rated_key">top_rated</string>
     <string name="most_popular_key">most_popular</string>
+    <string name="fav_only_key">favorites_only</string>
+
     <string name="poster_content_description">Movie Poster Image</string>
     <string name="title_activity_detail">Movie Details</string>
 </resources>

@@ -2,6 +2,7 @@ package com.udacity.mal.movieapp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.widget.Spinner;
 
 import com.udacity.mal.movieapp.adapters.GridAdapter;
 import com.udacity.mal.movieapp.data.Movie;
+import com.udacity.mal.movieapp.provider.MoviesContract;
 import com.udacity.mal.movieapp.utilities.ApiParams;
 
 import org.json.JSONArray;
@@ -43,6 +45,7 @@ public class MovieGridFragment extends Fragment implements AdapterView.OnItemSel
     private SwipeRefreshLayout mSwipeContainer;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
+    private RecyclerView thumbnailsGrid;
 
     public MovieGridFragment()
     {
@@ -71,20 +74,84 @@ public class MovieGridFragment extends Fragment implements AdapterView.OnItemSel
         editor = sharedPref.edit();
     }
 
+
+    private int[] parseGenres(String genres)
+    {
+        Log.d("genres", genres);
+        return new int[10];
+    }
+
     public void refreshMovieList(String sortOrder)
     {
-        new FetchMoviesTask().execute(sortOrder);
+        if (sortOrder.equals(getString(R.string.fav_only_key)))
+        {
+            // Populate mMovieList with movies in Database
+            // Select all movies in Database
+            Cursor movieCursor = getContext().getContentResolver().query(
+                    MoviesContract.MovieEntry.CONTENT_URI,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+            mMovieList.clear();
+            if (movieCursor.moveToFirst())
+            {
+
+                int id_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_ID);
+                int title_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_TITLE);
+                int overview_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_OVERVIEW);
+                int popularity_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_POPULARITY);
+                int vote_count_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_VOTE_COUNT);
+                int release_date_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_RELEASE_DATE);
+                int favored_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_FAVORED);
+                int poster_path_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_POSTER_PATH);
+                int backdrop_path_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_BACKDROP_PATH);
+                int original_language_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_ORIGINAL_LANGUAGE);
+                int original_title_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_ORIGINAL_TITLE);
+                int adult_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_ADULT);
+                int video_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_VIDEO);
+                int genre_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_GENRE_IDS);
+                int vote_avg_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_VOTE_AVERAGE);
+
+                do
+                {
+                    Movie temp = new Movie();
+                    temp.setId(movieCursor.getInt(id_col));
+                    temp.setTitle(movieCursor.getString(title_col));
+                    temp.setOverview(movieCursor.getString(overview_col));
+                    temp.setPopularity(movieCursor.getDouble(popularity_col));
+                    temp.setVote_count(movieCursor.getInt(vote_count_col));
+                    temp.setRelease_date(movieCursor.getString(release_date_col));
+                    temp.setPoster_path(movieCursor.getString(poster_path_col));
+                    temp.setBackdrop_path(movieCursor.getString(backdrop_path_col));
+                    temp.setOriginal_language(movieCursor.getString(original_language_col));
+                    temp.setOriginal_title(movieCursor.getString(original_title_col));
+                    temp.setAdult(movieCursor.getInt(adult_col) == 1 ? true : false);
+                    temp.setVideo(movieCursor.getInt(video_col) == 1 ? true : false);
+                    temp.setGenre_ids(parseGenres(movieCursor.getString(genre_col)));
+                    temp.setVote_average(movieCursor.getDouble(vote_avg_col));
+
+                    mMovieList.add(temp);
+
+                } while (movieCursor.moveToNext());
+                movieCursor.close();
+            }
+            mGridAdapter.notifyDataSetChanged();
+            mSwipeContainer.setRefreshing(false);
+            Log.i("GridPosition", String.valueOf(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), 0)));
+            thumbnailsGrid.setVerticalScrollbarPosition(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), 0));
+        }
+        else
+        {
+            new FetchMoviesTask().execute(sortOrder);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-
-        refreshMovieList(sharedPref.getString(
-                getString(R.string.sort_order_shared_pref_key), getString(R.string.most_popular_key)
-        ));
-
         // Inflate the layout for this fragment
         View fragView = inflater.inflate(R.layout.fragment_movie_grid, container, false);
 
@@ -95,7 +162,9 @@ public class MovieGridFragment extends Fragment implements AdapterView.OnItemSel
                 R.array.sort_prefrences_array, android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
+        spinner.setSelection(sharedPref.getInt(getString(R.string.spinner_position_shared_pref_key), 0));
         spinner.setOnItemSelectedListener(this);
+
         // Initialize Swipe Menu
         mSwipeContainer = (SwipeRefreshLayout) fragView.findViewById(R.id.swipePosterContainer);
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
@@ -111,10 +180,12 @@ public class MovieGridFragment extends Fragment implements AdapterView.OnItemSel
 
         // Initialize Recycler View
         mGridAdapter = new GridAdapter(getContext(), mMovieList);
-        RecyclerView thumbnailsGrid = (RecyclerView) fragView.findViewById(R.id.thumbnails_grid);
+        thumbnailsGrid = (RecyclerView) fragView.findViewById(R.id.thumbnails_grid);
         thumbnailsGrid.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         thumbnailsGrid.setAdapter(mGridAdapter);
-
+        refreshMovieList(sharedPref.getString(
+                getString(R.string.sort_order_shared_pref_key), getString(R.string.most_popular_key)
+        ));
         return fragView;
 
     }
@@ -128,14 +199,23 @@ public class MovieGridFragment extends Fragment implements AdapterView.OnItemSel
         {
             // TODO: Refactor Keys and Values from R.string to Static class variables
             editor.putString(getString(R.string.sort_order_shared_pref_key), getString(R.string.top_rated_key));
+            editor.putInt(getString(R.string.spinner_position_shared_pref_key), 1);
             editor.commit();
             refreshMovieList(getString(R.string.top_rated_key));
         }
         else if (sortBy.equals("Most Popular"))
         {
             editor.putString(getString(R.string.sort_order_shared_pref_key), getString(R.string.most_popular_key));
+            editor.putInt(getString(R.string.spinner_position_shared_pref_key), 0);
             editor.commit();
             refreshMovieList(getString(R.string.most_popular_key));
+        }
+        else if (sortBy.equals("Favorites"))
+        {
+            editor.putString(getString(R.string.sort_order_shared_pref_key), getString(R.string.fav_only_key));
+            editor.putInt(getString(R.string.spinner_position_shared_pref_key), 2);
+            editor.commit();
+            refreshMovieList(getString(R.string.fav_only_key));
         }
     }
 
@@ -253,6 +333,8 @@ public class MovieGridFragment extends Fragment implements AdapterView.OnItemSel
         {
             mGridAdapter.notifyDataSetChanged();
             mSwipeContainer.setRefreshing(false);
+            Log.i("GridPosition", String.valueOf(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), 0)));
+            thumbnailsGrid.setVerticalScrollbarPosition(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), 0));
         }
     }
 }
