@@ -2,6 +2,7 @@ package com.udacity.mal.movieapp.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -117,15 +118,16 @@ public class FavoritesGridAdapter extends CursorRecyclerViewAdapter<FavoritesGri
                 //Toast.makeText(mContext, mMovies.get(position).getTitle(), Toast.LENGTH_SHORT).show();
 
                 // Save clicked item position
-//                SharedPreferences shp = mContext.getSharedPreferences(mContext.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-//                SharedPreferences.Editor editor = shp.edit();
-//                editor.putInt(mContext.getString(R.string.poster_grid_position_shared_pref_key), position);
-//                editor.commit();
                 RecyclerView parentRecyclerView = (RecyclerView) v.getParent();
                 int position = parentRecyclerView.getChildLayoutPosition(v);
                 if (position != RecyclerView.NO_POSITION)
                 {
                     movieCursor.moveToPosition(position);
+                    SharedPreferences shp = mContext.getSharedPreferences(mContext.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = shp.edit();
+                    editor.putInt(mContext.getString(R.string.poster_grid_position_shared_pref_key), position);
+                    editor.commit();
+
                 }
 
                 Intent detail = new Intent(mContext, DetailActivity.class);

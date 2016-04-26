@@ -105,8 +105,43 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/reviewsBox"
-                    android:text="Reviews go here"/>
+                    android:text="Reviews"
+                    android:textSize="20sp"
+                    android:textColor="@color/colorAccent"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="2dp"/>
+
+
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/reviewsBox">
+
+                </ListView>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Trailers"
+                    android:textSize="20sp"
+                    android:textColor="@color/colorAccent"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="2dp"/>
+
+                <ScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ListView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/trailersBox">
+
+                    </ListView>
+
+                </ScrollView>
+
 
             </LinearLayout>
 

@@ -90,6 +90,7 @@ public class MovieGridFragment
             // Populate mMovieList with movies in Database
             // Select all movies in Database
             getLoaderManager().initLoader(FAV_LOADER, null, this);
+            mSwipeContainer.setRefreshing(false);
             thumbnailsGrid.setAdapter(mFavGridAdapter);
 //            Cursor movieCursor = getContext().getContentResolver().query(
 //                    MoviesContract.MovieEntry.CONTENT_URI,
@@ -378,7 +379,7 @@ public class MovieGridFragment
         {
             mGridAdapter.notifyDataSetChanged();
             mSwipeContainer.setRefreshing(false);
-            Log.i("GridPosition", String.valueOf(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), 0)));
+            Log.i("GridPosition", String.valueOf(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), -1)));
             thumbnailsGrid.scrollToPosition(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), 0));
         }
     }

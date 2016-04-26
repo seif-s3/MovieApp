@@ -5,22 +5,41 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.udacity.mal.movieapp.adapters.ReviewAdapter;
+import com.udacity.mal.movieapp.adapters.TrailerAdapter;
 import com.udacity.mal.movieapp.data.Movie;
+import com.udacity.mal.movieapp.data.Review;
+import com.udacity.mal.movieapp.data.Trailer;
 import com.udacity.mal.movieapp.provider.MoviesContract;
 import com.udacity.mal.movieapp.utilities.ApiParams;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DateFormatSymbols;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MovieDetailFragment extends Fragment implements View.OnClickListener
 {
@@ -32,9 +51,17 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
     private TextView mRatingView;
     private TextView mPlotView;
     private TextView mReleaseDateView;
+    private ListView mTrailersBox;
+    private ListView mReviewsBox;
     private View rootView;
     private Button favButton;
     private boolean isFav = false;
+
+    private ArrayList<Review> mReviews = new ArrayList<>();
+    private ReviewAdapter mReviewsAdapter;
+
+    private ArrayList<Trailer> mTrailers = new ArrayList<>();
+    private TrailerAdapter mTrailerAdapter;
 
     public MovieDetailFragment()
     {
@@ -58,6 +85,14 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
         mPlotView = (TextView) rootView.findViewById(R.id.movie_detail_plot);
         mReleaseDateView = (TextView) rootView.findViewById(R.id.movie_release_date);
 
+        mTrailersBox = (ListView) rootView.findViewById(R.id.trailersBox);
+        mTrailerAdapter = new TrailerAdapter(getContext(), mTrailers);
+        mTrailersBox.setAdapter(mTrailerAdapter);
+
+        mReviewsBox = (ListView) rootView.findViewById(R.id.reviewsBox);
+        mReviewsAdapter = new ReviewAdapter(getContext(), mReviews);
+        mReviewsBox.setAdapter(mReviewsAdapter);
+
         favButton = (Button) rootView.findViewById(R.id.favButton);
         if (isFav)
         {
@@ -71,6 +106,9 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
         mRatingView.setText(formatRating(movieDetails));
         mPlotView.setText(movieDetails.getOverview());
         mReleaseDateView.setText(formatDate());
+
+        new FetchDataTask().execute("videos");
+        new FetchDataTask().execute("reviews");
 
         return rootView;
     }
@@ -173,6 +211,150 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
         if (v.getId() == R.id.favButton)
         {
             addToFav();
+        }
+    }
+
+    private class FetchDataTask extends AsyncTask<String, Void, Void>
+    {
+        public static final String LOG_TAG = "FETCHMOVIES_TASK";
+
+        public void parseTrailerJson(String json)
+                throws JSONException
+        {
+            try
+            {
+                mTrailers.clear();
+                JSONObject responseJson = new JSONObject(json);
+                JSONArray resultsArray = responseJson.getJSONArray("results");
+                for (int i = 0; i < resultsArray.length(); i++)
+                {
+                    mTrailers.add(new Trailer(resultsArray.getJSONObject(i)));
+                }
+                Log.i("TRAILERS", "Added " + mTrailers.size() + " trailers");
+            } catch (JSONException e)
+            {
+                Log.e(LOG_TAG, "Parsing Trailers JSON failed");
+                e.printStackTrace();
+            }
+        }
+
+        public void parseReviewJson(String json)
+                throws JSONException
+        {
+            try
+            {
+                mReviews.clear();
+                JSONObject responseJson = new JSONObject(json);
+                JSONArray resultsArray = responseJson.getJSONArray("results");
+                for (int i = 0; i < resultsArray.length(); i++)
+                {
+                    mReviews.add(new Review(resultsArray.getJSONObject(i)));
+                }
+                Log.i("TRAILERS", "Added " + mReviews.size() + " reviews");
+            } catch (JSONException e)
+            {
+                Log.e(LOG_TAG, "Parsing Reviews JSON failed");
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected Void doInBackground(String... params)
+        {
+            // Params might either be Popular or Top Rated
+
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            if (params.length == 0)
+            {
+                return null;
+            }
+            String reqType = params[0];
+
+            HashMap<String, String> endpoints = new HashMap<>();
+            endpoints.put("videos", ApiParams.VIDEOS_ENDPOINT);
+            endpoints.put("reviews", ApiParams.REVIEWS_ENDPOINT);
+
+            String moviesJsonStr = null;
+
+            try
+            {
+                Uri builtUri = Uri.parse(ApiParams.MOVIES_BASE_URL).buildUpon()
+                        .appendPath(ApiParams.MOVIE_ENDPOINT)
+                        .appendPath(movieDetails.getId().toString())
+                        .appendPath(endpoints.get(reqType))
+                        .appendQueryParameter(ApiParams.API_KEY_PARAM, ApiParams.API_KEY)
+                        .build();
+
+                URL url = new URL(builtUri.toString());
+                Log.i("API_URL", url.toString());
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                // Read the input stream into a String
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null)
+                {
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null)
+                {
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0)
+                {
+                    // Stream was empty.  No point in parsing.
+                    return null;
+                }
+                moviesJsonStr = buffer.toString();
+                Log.v(LOG_TAG, moviesJsonStr.toString());
+
+                if (reqType.equals("videos"))
+                {
+                    parseTrailerJson(moviesJsonStr);
+                }
+                else if (reqType.equals("reviews"))
+                {
+                    parseReviewJson(moviesJsonStr);
+                }
+
+
+            } catch (Exception e)
+            {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            } finally
+            {
+                if (urlConnection != null)
+                {
+                    urlConnection.disconnect();
+                }
+                if (reader != null)
+                {
+                    try
+                    {
+                        reader.close();
+                    } catch (final IOException e)
+                    {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid)
+        {
+            mTrailerAdapter.notifyDataSetChanged();
+            mReviewsAdapter.notifyDataSetChanged();
         }
     }
 }

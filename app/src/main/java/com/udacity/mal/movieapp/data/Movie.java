@@ -117,7 +117,7 @@ public class Movie implements Parcelable
 
         } catch (JSONException e)
         {
-            Log.e(LOG_TAG, "ERROR Parsing JSON Object");
+            Log.e(LOG_TAG, "ERROR Parsing Movie JSON Object");
             e.printStackTrace();
         }
     }
