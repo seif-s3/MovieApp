@@ -33,6 +33,7 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.PosterViewHold
         mMovies = movies;
     }
 
+
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView)
     {

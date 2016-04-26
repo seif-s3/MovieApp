@@ -60,6 +60,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Release Date"
+                        android:id="@+id/movie_release_date"
+                        android:padding="4dp"
+                        android:layout_gravity="center_vertical"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="Rating"
                         android:id="@+id/movie_detail_rating"
                         android:padding="4dp"

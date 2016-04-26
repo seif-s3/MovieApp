@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.udacity.mal.movieapp.adapters.FavoritesGridAdapter;
 import com.udacity.mal.movieapp.adapters.GridAdapter;
 import com.udacity.mal.movieapp.data.Movie;
 import com.udacity.mal.movieapp.provider.MoviesContract;
@@ -37,10 +40,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MovieGridFragment extends Fragment implements AdapterView.OnItemSelectedListener
+public class MovieGridFragment
+        extends Fragment
+        implements AdapterView.OnItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor>
 {
     public static final String LOG_TAG = "MOVIE_GRID_FRAGMENT";
+    public static final int FAV_LOADER = 0;
     private GridAdapter mGridAdapter;
+    private FavoritesGridAdapter mFavGridAdapter;
     private ArrayList<Movie> mMovieList = new ArrayList<>();
     private SwipeRefreshLayout mSwipeContainer;
     private SharedPreferences sharedPref;
@@ -75,11 +82,6 @@ public class MovieGridFragment extends Fragment implements AdapterView.OnItemSel
     }
 
 
-    private int[] parseGenres(String genres)
-    {
-        Log.d("genres", genres);
-        return new int[10];
-    }
 
     public void refreshMovieList(String sortOrder)
     {
@@ -87,63 +89,66 @@ public class MovieGridFragment extends Fragment implements AdapterView.OnItemSel
         {
             // Populate mMovieList with movies in Database
             // Select all movies in Database
-            Cursor movieCursor = getContext().getContentResolver().query(
-                    MoviesContract.MovieEntry.CONTENT_URI,
-                    null,
-                    null,
-                    null,
-                    null
-            );
-            mMovieList.clear();
-            if (movieCursor.moveToFirst())
-            {
-
-                int id_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_ID);
-                int title_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_TITLE);
-                int overview_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_OVERVIEW);
-                int popularity_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_POPULARITY);
-                int vote_count_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_VOTE_COUNT);
-                int release_date_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_RELEASE_DATE);
-                int favored_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_FAVORED);
-                int poster_path_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_POSTER_PATH);
-                int backdrop_path_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_BACKDROP_PATH);
-                int original_language_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_ORIGINAL_LANGUAGE);
-                int original_title_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_ORIGINAL_TITLE);
-                int adult_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_ADULT);
-                int video_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_VIDEO);
-                int genre_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_GENRE_IDS);
-                int vote_avg_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_VOTE_AVERAGE);
-
-                do
-                {
-                    Movie temp = new Movie();
-                    temp.setId(movieCursor.getInt(id_col));
-                    temp.setTitle(movieCursor.getString(title_col));
-                    temp.setOverview(movieCursor.getString(overview_col));
-                    temp.setPopularity(movieCursor.getDouble(popularity_col));
-                    temp.setVote_count(movieCursor.getInt(vote_count_col));
-                    temp.setRelease_date(movieCursor.getString(release_date_col));
-                    temp.setPoster_path(movieCursor.getString(poster_path_col));
-                    temp.setBackdrop_path(movieCursor.getString(backdrop_path_col));
-                    temp.setOriginal_language(movieCursor.getString(original_language_col));
-                    temp.setOriginal_title(movieCursor.getString(original_title_col));
-                    temp.setAdult(movieCursor.getInt(adult_col) == 1 ? true : false);
-                    temp.setVideo(movieCursor.getInt(video_col) == 1 ? true : false);
-                    temp.setGenre_ids(parseGenres(movieCursor.getString(genre_col)));
-                    temp.setVote_average(movieCursor.getDouble(vote_avg_col));
-
-                    mMovieList.add(temp);
-
-                } while (movieCursor.moveToNext());
-                movieCursor.close();
-            }
-            mGridAdapter.notifyDataSetChanged();
-            mSwipeContainer.setRefreshing(false);
-            Log.i("GridPosition", String.valueOf(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), 0)));
-            thumbnailsGrid.setVerticalScrollbarPosition(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), 0));
+            getLoaderManager().initLoader(FAV_LOADER, null, this);
+            thumbnailsGrid.setAdapter(mFavGridAdapter);
+//            Cursor movieCursor = getContext().getContentResolver().query(
+//                    MoviesContract.MovieEntry.CONTENT_URI,
+//                    null,
+//                    null,
+//                    null,
+//                    null
+//            );
+//            mMovieList.clear();
+//            if (movieCursor.moveToFirst())
+//            {
+//
+//                int id_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_ID);
+//                int title_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_TITLE);
+//                int overview_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_OVERVIEW);
+//                int popularity_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_POPULARITY);
+//                int vote_count_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_VOTE_COUNT);
+//                int release_date_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_RELEASE_DATE);
+//                int favored_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_FAVORED);
+//                int poster_path_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_POSTER_PATH);
+//                int backdrop_path_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_BACKDROP_PATH);
+//                int original_language_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_ORIGINAL_LANGUAGE);
+//                int original_title_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_ORIGINAL_TITLE);
+//                int adult_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_ADULT);
+//                int video_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_VIDEO);
+//                int genre_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_GENRE_IDS);
+//                int vote_avg_col = movieCursor.getColumnIndex(MoviesContract.MovieEntry.MOVIE_VOTE_AVERAGE);
+//
+//                do
+//                {
+//                    Movie temp = new Movie();
+//                    temp.setId(movieCursor.getInt(id_col));
+//                    temp.setTitle(movieCursor.getString(title_col));
+//                    temp.setOverview(movieCursor.getString(overview_col));
+//                    temp.setPopularity(movieCursor.getDouble(popularity_col));
+//                    temp.setVote_count(movieCursor.getInt(vote_count_col));
+//                    temp.setRelease_date(movieCursor.getString(release_date_col));
+//                    temp.setPoster_path(movieCursor.getString(poster_path_col));
+//                    temp.setBackdrop_path(movieCursor.getString(backdrop_path_col));
+//                    temp.setOriginal_language(movieCursor.getString(original_language_col));
+//                    temp.setOriginal_title(movieCursor.getString(original_title_col));
+//                    temp.setAdult(movieCursor.getInt(adult_col) == 1 ? true : false);
+//                    temp.setVideo(movieCursor.getInt(video_col) == 1 ? true : false);
+//                    temp.setGenre_ids(Utilities.parseGenres(movieCursor.getString(genre_col)));
+//                    temp.setVote_average(movieCursor.getDouble(vote_avg_col));
+//
+//                    mMovieList.add(temp);
+//
+//                } while (movieCursor.moveToNext());
+//                movieCursor.close();
+//            }
+//            mGridAdapter.notifyDataSetChanged();
+//            mSwipeContainer.setRefreshing(false);
+//            Log.i("GridPosition", String.valueOf(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), 0)));
+//            thumbnailsGrid.setVerticalScrollbarPosition(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), 0));
         }
         else
         {
+            thumbnailsGrid.setAdapter(mGridAdapter);
             new FetchMoviesTask().execute(sortOrder);
         }
     }
@@ -180,9 +185,13 @@ public class MovieGridFragment extends Fragment implements AdapterView.OnItemSel
 
         // Initialize Recycler View
         mGridAdapter = new GridAdapter(getContext(), mMovieList);
+
+        mFavGridAdapter = new FavoritesGridAdapter(getContext(), null);
+
         thumbnailsGrid = (RecyclerView) fragView.findViewById(R.id.thumbnails_grid);
         thumbnailsGrid.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         thumbnailsGrid.setAdapter(mGridAdapter);
+
         refreshMovieList(sharedPref.getString(
                 getString(R.string.sort_order_shared_pref_key), getString(R.string.most_popular_key)
         ));
@@ -223,6 +232,40 @@ public class MovieGridFragment extends Fragment implements AdapterView.OnItemSel
     public void onNothingSelected(AdapterView<?> parent)
     {
 
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args)
+    {
+        return new android.support.v4.content.CursorLoader(
+                getActivity(),
+                MoviesContract.MovieEntry.buildMovieUri(),
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data)
+    {
+        mFavGridAdapter.swapCursor(data);
+    }
+
+    /**
+     * Called when a previously created loader is being reset, and thus
+     * making its data unavailable.  The application should at this point
+     * remove any references it has to the Loader's data.
+     *
+     * @param loader The Loader that is being reset.
+     */
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader)
+    {
+        mFavGridAdapter.swapCursor(null);
     }
 
 

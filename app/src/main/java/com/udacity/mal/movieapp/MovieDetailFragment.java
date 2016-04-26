@@ -20,6 +20,8 @@ import com.udacity.mal.movieapp.data.Movie;
 import com.udacity.mal.movieapp.provider.MoviesContract;
 import com.udacity.mal.movieapp.utilities.ApiParams;
 
+import java.text.DateFormatSymbols;
+
 public class MovieDetailFragment extends Fragment implements View.OnClickListener
 {
 
@@ -29,6 +31,7 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
     private TextView mTitleView;
     private TextView mRatingView;
     private TextView mPlotView;
+    private TextView mReleaseDateView;
     private View rootView;
     private Button favButton;
     private boolean isFav = false;
@@ -53,6 +56,8 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
         mTitleView = (TextView) rootView.findViewById(R.id.movie_detail_title);
         mRatingView = (TextView) rootView.findViewById(R.id.movie_detail_rating);
         mPlotView = (TextView) rootView.findViewById(R.id.movie_detail_plot);
+        mReleaseDateView = (TextView) rootView.findViewById(R.id.movie_release_date);
+
         favButton = (Button) rootView.findViewById(R.id.favButton);
         if (isFav)
         {
@@ -65,6 +70,7 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
         mTitleView.setText(movieDetails.getTitle());
         mRatingView.setText(formatRating(movieDetails));
         mPlotView.setText(movieDetails.getOverview());
+        mReleaseDateView.setText(formatDate());
 
         return rootView;
     }
@@ -75,6 +81,13 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
         sb.append(m.getVote_average());
         sb.append("/10.0");
         return sb.toString();
+    }
+
+    private String formatDate()
+    {
+        String[] parts = movieDetails.getRelease_date().split("-");
+        String month = new DateFormatSymbols().getMonths()[Integer.parseInt(parts[1]) - 1];
+        return parts[2] + " " + month + " " + parts[0];
     }
 
     private void checkFav()
