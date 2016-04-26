@@ -121,6 +121,12 @@ public class FavoritesGridAdapter extends CursorRecyclerViewAdapter<FavoritesGri
 //                SharedPreferences.Editor editor = shp.edit();
 //                editor.putInt(mContext.getString(R.string.poster_grid_position_shared_pref_key), position);
 //                editor.commit();
+                RecyclerView parentRecyclerView = (RecyclerView) v.getParent();
+                int position = parentRecyclerView.getChildLayoutPosition(v);
+                if (position != RecyclerView.NO_POSITION)
+                {
+                    movieCursor.moveToPosition(position);
+                }
 
                 Intent detail = new Intent(mContext, DetailActivity.class);
                 Movie temp = new Movie();

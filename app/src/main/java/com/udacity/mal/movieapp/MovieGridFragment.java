@@ -185,7 +185,6 @@ public class MovieGridFragment
 
         // Initialize Recycler View
         mGridAdapter = new GridAdapter(getContext(), mMovieList);
-
         mFavGridAdapter = new FavoritesGridAdapter(getContext(), null);
 
         thumbnailsGrid = (RecyclerView) fragView.findViewById(R.id.thumbnails_grid);
@@ -209,6 +208,7 @@ public class MovieGridFragment
             // TODO: Refactor Keys and Values from R.string to Static class variables
             editor.putString(getString(R.string.sort_order_shared_pref_key), getString(R.string.top_rated_key));
             editor.putInt(getString(R.string.spinner_position_shared_pref_key), 1);
+            editor.putInt(getString(R.string.poster_grid_position_shared_pref_key), 0); // Reset Grid to 0
             editor.commit();
             refreshMovieList(getString(R.string.top_rated_key));
         }
@@ -216,6 +216,7 @@ public class MovieGridFragment
         {
             editor.putString(getString(R.string.sort_order_shared_pref_key), getString(R.string.most_popular_key));
             editor.putInt(getString(R.string.spinner_position_shared_pref_key), 0);
+            editor.putInt(getString(R.string.poster_grid_position_shared_pref_key), 0); // Reset Grid to 0
             editor.commit();
             refreshMovieList(getString(R.string.most_popular_key));
         }
@@ -223,6 +224,7 @@ public class MovieGridFragment
         {
             editor.putString(getString(R.string.sort_order_shared_pref_key), getString(R.string.fav_only_key));
             editor.putInt(getString(R.string.spinner_position_shared_pref_key), 2);
+            editor.putInt(getString(R.string.poster_grid_position_shared_pref_key), 0); // Reset Grid to 0
             editor.commit();
             refreshMovieList(getString(R.string.fav_only_key));
         }
@@ -377,7 +379,7 @@ public class MovieGridFragment
             mGridAdapter.notifyDataSetChanged();
             mSwipeContainer.setRefreshing(false);
             Log.i("GridPosition", String.valueOf(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), 0)));
-            thumbnailsGrid.setVerticalScrollbarPosition(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), 0));
+            thumbnailsGrid.scrollToPosition(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), 0));
         }
     }
 }
