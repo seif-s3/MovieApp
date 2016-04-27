@@ -152,6 +152,7 @@ public class MovieGridFragment
         }
         else
         {
+
             new FetchMoviesTask().execute(sortOrder);
         }
     }
@@ -304,6 +305,14 @@ public class MovieGridFragment
                 Log.e(LOG_TAG, "Parsing JSON failed");
                 e.printStackTrace();
             }
+        }
+
+        @Override
+        protected void onPreExecute()
+        {
+            // This probably fixed the RV Bug
+            mMovieList.clear();
+            mGridAdapter.notifyDataSetChanged();
         }
 
         @Override
