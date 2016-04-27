@@ -16,6 +16,7 @@ import com.squareup.picasso.Picasso;
 import com.udacity.mal.movieapp.DetailActivity;
 import com.udacity.mal.movieapp.R;
 import com.udacity.mal.movieapp.data.Movie;
+import com.udacity.mal.movieapp.interfaces.MovieChosenListener;
 import com.udacity.mal.movieapp.provider.MoviesContract;
 import com.udacity.mal.movieapp.utilities.ApiParams;
 import com.udacity.mal.movieapp.utilities.Utilities;
@@ -26,11 +27,22 @@ import com.udacity.mal.movieapp.utilities.Utilities;
 public class FavoritesGridAdapter extends CursorRecyclerViewAdapter<FavoritesGridAdapter.PosterViewHolder>
 {
 
+    private MovieChosenListener movieChosenListener;
+
+    public MovieChosenListener getMovieChosenListener()
+    {
+        return movieChosenListener;
+    }
+
+    public void setMovieChosenListener(MovieChosenListener movieChosenListener)
+    {
+        this.movieChosenListener = movieChosenListener;
+    }
+
     public FavoritesGridAdapter(Context context, Cursor cursor)
     {
         super(context, cursor);
     }
-
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView)
@@ -147,9 +159,10 @@ public class FavoritesGridAdapter extends CursorRecyclerViewAdapter<FavoritesGri
                 temp.setGenre_ids(Utilities.parseGenres(movieCursor.getString(genre_col)));
                 temp.setVote_average(movieCursor.getDouble(vote_avg_col));
 
-
-                detail.putExtra("MOVIE", temp);
-                mContext.startActivity(detail);
+                movieChosenListener.paneHandleItemClick(temp);
+//
+//                detail.putExtra("MOVIE", temp);
+//                mContext.startActivity(detail);
 
             }
         });

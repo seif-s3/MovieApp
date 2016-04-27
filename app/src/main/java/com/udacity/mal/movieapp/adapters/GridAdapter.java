@@ -1,7 +1,6 @@
 package com.udacity.mal.movieapp.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -12,9 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.udacity.mal.movieapp.DetailActivity;
 import com.udacity.mal.movieapp.R;
 import com.udacity.mal.movieapp.data.Movie;
+import com.udacity.mal.movieapp.interfaces.MovieChosenListener;
 import com.udacity.mal.movieapp.utilities.ApiParams;
 
 import java.util.ArrayList;
@@ -26,6 +25,18 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.PosterViewHold
 {
     private Context mContext;
     public ArrayList<Movie> mMovies;
+
+    private MovieChosenListener mMovieListener;
+
+    public MovieChosenListener getmMovieListener()
+    {
+        return mMovieListener;
+    }
+
+    public void setmMovieListener(MovieChosenListener mMovieListener)
+    {
+        this.mMovieListener = mMovieListener;
+    }
 
     public GridAdapter(Context ctx, ArrayList<Movie> movies)
     {
@@ -76,10 +87,12 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.PosterViewHold
                     editor.putInt(mContext.getString(R.string.poster_grid_position_shared_pref_key), position);
                     editor.commit();
 
+                    mMovieListener.paneHandleItemClick(mMovies.get(position));
+                    /*
                     Intent detail = new Intent(mContext, DetailActivity.class);
                     detail.putExtra("MOVIE", mMovies.get(position));
                     mContext.startActivity(detail);
-
+*/
                 }
             });
             movieTitle.setText(mMovies.get(position).getTitle());

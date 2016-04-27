@@ -10,14 +10,18 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -43,7 +47,9 @@ import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MovieDetailFragment extends Fragment implements View.OnClickListener
+public class MovieDetailFragment
+        extends Fragment
+        implements View.OnClickListener
 {
 
     private Movie movieDetails;
@@ -53,11 +59,10 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
     private TextView mRatingView;
     private TextView mPlotView;
     private TextView mReleaseDateView;
-    private ListView mTrailersBox;
-    private ListView mReviewsBox;
     private View rootView;
     private Button favButton;
     private boolean isFav = false;
+    private ShareActionProvider mShareActionProvider;
 
     private ArrayList<Review> mReviews = new ArrayList<>();
     private ReviewAdapter mReviewsAdapter;
@@ -71,11 +76,37 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        inflater.inflate(R.menu.menu_detail, menu);
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+
+        // Get the provider and hold onto it to set/change the share intent.
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+
+        if (mTrailers.size() > 0)
+        {
+            mShareActionProvider.setShareIntent(createShareTrailerIntent());
+        }
+    }
+
+    private Intent createShareTrailerIntent()
+    {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        String intro = "Watch " + movieDetails.getTitle() + " trailer at: ";
+        String link = "youtube.com/watch?v=" + mTrailers.get(0).getKey();
+        shareIntent.putExtra(Intent.EXTRA_TEXT, intro + link);
+        return shareIntent;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        Intent details = getActivity().getIntent();
-        movieDetails = details.getParcelableExtra("MOVIE");
+
+        movieDetails = getArguments().getParcelable("MOVIE");
 
         checkFav();
 

@@ -25,6 +25,7 @@ import android.widget.Spinner;
 import com.udacity.mal.movieapp.adapters.FavoritesGridAdapter;
 import com.udacity.mal.movieapp.adapters.GridAdapter;
 import com.udacity.mal.movieapp.data.Movie;
+import com.udacity.mal.movieapp.interfaces.MovieChosenListener;
 import com.udacity.mal.movieapp.provider.MoviesContract;
 import com.udacity.mal.movieapp.utilities.ApiParams;
 
@@ -54,7 +55,6 @@ public class MovieGridFragment
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
     private RecyclerView thumbnailsGrid;
-    Bundle state;
 
     public MovieGridFragment()
     {
@@ -152,6 +152,7 @@ public class MovieGridFragment
         }
         else
         {
+
             new FetchMoviesTask().execute(sortOrder);
         }
     }
@@ -188,7 +189,10 @@ public class MovieGridFragment
 
         // Initialize Recycler View
         mGridAdapter = new GridAdapter(getContext(), mMovieList);
+        mGridAdapter.setmMovieListener((MovieChosenListener) getActivity());
+
         mFavGridAdapter = new FavoritesGridAdapter(getContext(), null);
+        mFavGridAdapter.setMovieChosenListener((MovieChosenListener) getActivity());
 
         thumbnailsGrid = (RecyclerView) fragView.findViewById(R.id.thumbnails_grid);
 
@@ -304,6 +308,14 @@ public class MovieGridFragment
                 Log.e(LOG_TAG, "Parsing JSON failed");
                 e.printStackTrace();
             }
+        }
+
+        @Override
+        protected void onPreExecute()
+        {
+            // This probably fixed the RV Bug
+            mMovieList.clear();
+            mGridAdapter.notifyDataSetChanged();
         }
 
         @Override
