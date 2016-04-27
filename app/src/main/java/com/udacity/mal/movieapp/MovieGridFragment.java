@@ -2,6 +2,7 @@ package com.udacity.mal.movieapp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -53,11 +54,13 @@ public class MovieGridFragment
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
     private RecyclerView thumbnailsGrid;
+    Bundle state;
 
     public MovieGridFragment()
     {
         setHasOptionsMenu(true);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
@@ -149,7 +152,6 @@ public class MovieGridFragment
         }
         else
         {
-            thumbnailsGrid.setAdapter(mGridAdapter);
             new FetchMoviesTask().execute(sortOrder);
         }
     }
@@ -189,7 +191,16 @@ public class MovieGridFragment
         mFavGridAdapter = new FavoritesGridAdapter(getContext(), null);
 
         thumbnailsGrid = (RecyclerView) fragView.findViewById(R.id.thumbnails_grid);
-        thumbnailsGrid.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+
+        if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+        {
+            thumbnailsGrid.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        }
+        else
+        {
+            thumbnailsGrid.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        }
+
         thumbnailsGrid.setAdapter(mGridAdapter);
 
         refreshMovieList(sharedPref.getString(
@@ -378,6 +389,7 @@ public class MovieGridFragment
         protected void onPostExecute(Void aVoid)
         {
             mGridAdapter.notifyDataSetChanged();
+            thumbnailsGrid.setAdapter(mGridAdapter);
             mSwipeContainer.setRefreshing(false);
             Log.i("GridPosition", String.valueOf(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), -1)));
             thumbnailsGrid.scrollToPosition(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), 0));

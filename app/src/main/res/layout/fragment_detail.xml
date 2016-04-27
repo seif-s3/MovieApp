@@ -22,12 +22,12 @@
             android:layout_alignParentTop="true">
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:id="@+id/movie_detail_backdrop"
                 android:src="@drawable/placeholder_movie_details_image"
                 android:layout_gravity="center_vertical"
-                android:layout_weight="0.4"/>
+                />
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -42,7 +42,7 @@
                     android:src="@drawable/placeholder_movie_poster"
                     android:padding="16dp"/>
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:paddingTop="35dp">
@@ -88,6 +88,36 @@
             </LinearLayout>
 
             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reviews"
+                    android:textSize="20sp"
+                    android:textColor="@color/colorAccent"
+                    android:padding="16dp"
+                    android:id="@+id/movie_detail_reviews_label"
+                    android:layout_weight="0.5"
+                    style="?android:attr/borderlessButtonStyle"/>
+
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Trailers"
+                    android:textSize="20sp"
+                    android:textColor="@color/colorAccent"
+                    android:padding="16dp"
+                    android:id="@+id/movie_detail_trailers_label"
+                    android:layout_weight="0.5"
+                    style="?android:attr/borderlessButtonStyle"/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -101,46 +131,6 @@
                     android:text="Plot"
                     android:id="@+id/movie_detail_plot"
                     android:padding="4dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Reviews"
-                    android:textSize="20sp"
-                    android:textColor="@color/colorAccent"
-                    android:paddingBottom="8dp"
-                    android:paddingTop="2dp"/>
-
-
-                <ListView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/reviewsBox">
-
-                </ListView>
-
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Trailers"
-                    android:textSize="20sp"
-                    android:textColor="@color/colorAccent"
-                    android:paddingBottom="8dp"
-                    android:paddingTop="2dp"/>
-
-                <ScrollView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <ListView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/trailersBox">
-
-                    </ListView>
-
-                </ScrollView>
 
 
             </LinearLayout>

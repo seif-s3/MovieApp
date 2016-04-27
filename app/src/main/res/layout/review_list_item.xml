@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Author"
+        android:textColor="#039BE5"
         android:id="@+id/review_author"
         android:padding="5dp"/>
 

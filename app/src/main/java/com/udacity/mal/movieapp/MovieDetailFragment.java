@@ -2,6 +2,7 @@ package com.udacity.mal.movieapp;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,13 +87,91 @@ public class MovieDetailFragment extends Fragment implements View.OnClickListene
         mPlotView = (TextView) rootView.findViewById(R.id.movie_detail_plot);
         mReleaseDateView = (TextView) rootView.findViewById(R.id.movie_release_date);
 
-        mTrailersBox = (ListView) rootView.findViewById(R.id.trailersBox);
+        (rootView.findViewById(R.id.movie_detail_trailers_label)).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Trailers");
+                builder.setNegativeButton(
+                        "Done",
+                        new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                dialog.dismiss();
+                            }
+                        });
+                builder.setAdapter(mTrailerAdapter,
+                        new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" +
+                                        mTrailers.get(which).getKey())));
+                            }
+                        });
+                builder.show();
+            }
+        });
+//        mTrailersBox = (ListView) rootView.findViewById(R.id.trailersBox);
         mTrailerAdapter = new TrailerAdapter(getContext(), mTrailers);
-        mTrailersBox.setAdapter(mTrailerAdapter);
+//        mTrailersBox.setAdapter(mTrailerAdapter);
+//        mTrailersBox.setOnItemClickListener(new AdapterView.OnItemClickListener()
+//        {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+//            {
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" +
+//                        mTrailers.get(position).getKey())));
+//            }
+//        });
 
-        mReviewsBox = (ListView) rootView.findViewById(R.id.reviewsBox);
+        (rootView.findViewById(R.id.movie_detail_reviews_label)).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Reviews");
+                builder.setNegativeButton(
+                        "Done",
+                        new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                dialog.dismiss();
+                            }
+                        });
+                builder.setAdapter(mReviewsAdapter,
+                        new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mReviews.get(which).getUrl())));
+                            }
+                        });
+                builder.show();
+            }
+        });
+//        mReviewsBox = (ListView) rootView.findViewById(R.id.reviewsBox);
         mReviewsAdapter = new ReviewAdapter(getContext(), mReviews);
-        mReviewsBox.setAdapter(mReviewsAdapter);
+
+//        mReviewsBox.setOnItemClickListener(new AdapterView.OnItemClickListener()
+//        {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+//            {
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mReviews.get(position).getUrl())));
+//            }
+//        });
+//        mReviewsBox.setAdapter(mReviewsAdapter);
+
 
         favButton = (Button) rootView.findViewById(R.id.favButton);
         if (isFav)

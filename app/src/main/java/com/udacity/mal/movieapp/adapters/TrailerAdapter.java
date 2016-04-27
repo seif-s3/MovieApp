@@ -1,8 +1,6 @@
 package com.udacity.mal.movieapp.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,16 +55,6 @@ public class TrailerAdapter extends BaseAdapter
         convertView = layoutInflater.inflate(R.layout.trailer_list_item, null);
         TextView trailerTitle = (TextView) convertView.findViewById(R.id.trailer_title);
         trailerTitle.setText(mTrailers.get(position).getName());
-
-        trailerTitle.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" +
-                        mTrailers.get(position).getKey())));
-            }
-        });
         return convertView;
     }
 }
