@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.Environment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +20,9 @@ import com.udacity.mal.movieapp.R;
 import com.udacity.mal.movieapp.data.Movie;
 import com.udacity.mal.movieapp.interfaces.MovieChosenListener;
 import com.udacity.mal.movieapp.provider.MoviesContract;
-import com.udacity.mal.movieapp.utilities.ApiParams;
 import com.udacity.mal.movieapp.utilities.Utilities;
+
+import java.io.File;
 
 /**
  * Created by Seif3 on 3/25/2016.
@@ -137,7 +140,7 @@ public class FavoritesGridAdapter extends CursorRecyclerViewAdapter<FavoritesGri
                     movieCursor.moveToPosition(position);
                     SharedPreferences shp = mContext.getSharedPreferences(mContext.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = shp.edit();
-                    editor.putInt(mContext.getString(R.string.poster_grid_position_shared_pref_key), position);
+                    editor.putInt(mContext.getString(R.string.fav_grid_position_shared_pref_key), position);
                     editor.commit();
 
                 }
@@ -169,7 +172,11 @@ public class FavoritesGridAdapter extends CursorRecyclerViewAdapter<FavoritesGri
 
         movieTitle.setText(movieCursor.getString(title_col));
         date.setText(movieCursor.getString(release_date_col).split("-")[0]);
-        Picasso.with(mContext).load(ApiParams.BASE_IMG_URL + movieCursor.getString(poster_path_col)).into(poster);
+        Log.i("Poster_Path", Environment.getExternalStorageDirectory().getPath()
+                + Utilities.imageCacheFolder + movieCursor.getString(poster_path_col));
+        File posterP = new File(Environment.getExternalStorageDirectory().getPath()
+                + Utilities.imageCacheFolder + movieCursor.getString(poster_path_col));
+        Picasso.with(mContext).load(posterP).into(poster);
 
     }
 

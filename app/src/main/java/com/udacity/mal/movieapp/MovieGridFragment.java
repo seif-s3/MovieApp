@@ -15,12 +15,12 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.udacity.mal.movieapp.adapters.FavoritesGridAdapter;
 import com.udacity.mal.movieapp.adapters.GridAdapter;
@@ -28,6 +28,7 @@ import com.udacity.mal.movieapp.data.Movie;
 import com.udacity.mal.movieapp.interfaces.MovieChosenListener;
 import com.udacity.mal.movieapp.provider.MoviesContract;
 import com.udacity.mal.movieapp.utilities.ApiParams;
+import com.udacity.mal.movieapp.utilities.Utilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,18 +63,6 @@ public class MovieGridFragment
     }
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        int id = item.getItemId();
-        switch (id)
-        {
-            case R.id.action_settings:
-                // TODO: Launch
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -224,7 +213,7 @@ public class MovieGridFragment
             // TODO: Refactor Keys and Values from R.string to Static class variables
             editor.putString(getString(R.string.sort_order_shared_pref_key), getString(R.string.top_rated_key));
             editor.putInt(getString(R.string.spinner_position_shared_pref_key), 1);
-            editor.putInt(getString(R.string.poster_grid_position_shared_pref_key), 0); // Reset Grid to 0
+            //editor.putInt(getString(R.string.poster_grid_position_shared_pref_key), 0); // Reset Grid to 0
             editor.commit();
             refreshMovieList(getString(R.string.top_rated_key));
         }
@@ -232,7 +221,7 @@ public class MovieGridFragment
         {
             editor.putString(getString(R.string.sort_order_shared_pref_key), getString(R.string.most_popular_key));
             editor.putInt(getString(R.string.spinner_position_shared_pref_key), 0);
-            editor.putInt(getString(R.string.poster_grid_position_shared_pref_key), 0); // Reset Grid to 0
+            //editor.putInt(getString(R.string.poster_grid_position_shared_pref_key), 0); // Reset Grid to 0
             editor.commit();
             refreshMovieList(getString(R.string.most_popular_key));
         }
@@ -240,7 +229,7 @@ public class MovieGridFragment
         {
             editor.putString(getString(R.string.sort_order_shared_pref_key), getString(R.string.fav_only_key));
             editor.putInt(getString(R.string.spinner_position_shared_pref_key), 2);
-            editor.putInt(getString(R.string.poster_grid_position_shared_pref_key), 0); // Reset Grid to 0
+            //editor.putInt(getString(R.string.poster_grid_position_shared_pref_key), 0); // Reset Grid to 0
             editor.commit();
             refreshMovieList(getString(R.string.fav_only_key));
         }
@@ -319,11 +308,23 @@ public class MovieGridFragment
         }
 
         @Override
+        protected void onProgressUpdate(Void... values)
+        {
+            Toast.makeText(getActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
         protected Void doInBackground(String... params)
         {
             // Params might either be Popular or Top Rated
             if (params.length == 0)
             {
+                return null;
+            }
+            if (!Utilities.isInternetAvailable())
+            {
+                Log.i("INTERNET", "No internet connection");
+                publishProgress();
                 return null;
             }
             String orderType = params[0];
@@ -403,8 +404,8 @@ public class MovieGridFragment
             mGridAdapter.notifyDataSetChanged();
             thumbnailsGrid.setAdapter(mGridAdapter);
             mSwipeContainer.setRefreshing(false);
-            Log.i("GridPosition", String.valueOf(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), -1)));
-            thumbnailsGrid.scrollToPosition(sharedPref.getInt(getString(R.string.poster_grid_position_shared_pref_key), 0));
+            Log.i("GetGridPosition", Utilities.getGridPositionKey(getContext()) + " " + String.valueOf(sharedPref.getInt(Utilities.getGridPositionKey(getContext()), -1)));
+            thumbnailsGrid.scrollToPosition(sharedPref.getInt(Utilities.getGridPositionKey(getContext()), 0));
         }
     }
 }

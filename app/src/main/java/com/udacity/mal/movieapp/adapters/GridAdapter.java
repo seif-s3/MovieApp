@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.udacity.mal.movieapp.R;
 import com.udacity.mal.movieapp.data.Movie;
 import com.udacity.mal.movieapp.interfaces.MovieChosenListener;
 import com.udacity.mal.movieapp.utilities.ApiParams;
+import com.udacity.mal.movieapp.utilities.Utilities;
 
 import java.util.ArrayList;
 
@@ -70,7 +72,7 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.PosterViewHold
         {
             CardView posterCardView = holder.cardViewHolder;
             ImageView poster = holder.posterHolder;
-            TextView movieTitle = holder.titleHolder;
+            final TextView movieTitle = holder.titleHolder;
             TextView date = holder.dateHolder;
 
             // TODO: Handle Tablet mode from here
@@ -84,8 +86,12 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.PosterViewHold
                     // Save clicked item position
                     SharedPreferences shp = mContext.getSharedPreferences(mContext.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = shp.edit();
-                    editor.putInt(mContext.getString(R.string.poster_grid_position_shared_pref_key), position);
+
+
+                    editor.putInt(Utilities.getGridPositionKey(mContext), position);
                     editor.commit();
+                    Log.d("SetGridPosition", Utilities.getGridPositionKey(mContext) + " " + String.valueOf(shp.getInt(Utilities.getGridPositionKey(mContext), -1)));
+
 
                     mMovieListener.paneHandleItemClick(mMovies.get(position));
                     /*

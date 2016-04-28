@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.udacity.mal.movieapp.utilities.ApiParams;
+import com.udacity.mal.movieapp.utilities.Utilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -137,7 +138,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void>
     {
 //        mGridAdapter.notifyDataSetChanged();
 //        mSwipeContainer.setRefreshing(false);
-        Log.i("GridPosition", String.valueOf(sharedPref.getInt(mContext.getString(R.string.poster_grid_position_shared_pref_key), 0)));
+        Log.i("GridPosition", String.valueOf(sharedPref.getInt(Utilities.getGridPositionKey(mContext), 0)));
 
     }
 }

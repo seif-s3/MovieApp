@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -32,12 +33,14 @@ import com.udacity.mal.movieapp.data.Review;
 import com.udacity.mal.movieapp.data.Trailer;
 import com.udacity.mal.movieapp.provider.MoviesContract;
 import com.udacity.mal.movieapp.utilities.ApiParams;
+import com.udacity.mal.movieapp.utilities.Utilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -63,6 +66,7 @@ public class MovieDetailFragment
     private Button favButton;
     private boolean isFav = false;
     private ShareActionProvider mShareActionProvider;
+
 
     private ArrayList<Review> mReviews = new ArrayList<>();
     private ReviewAdapter mReviewsAdapter;
@@ -209,14 +213,30 @@ public class MovieDetailFragment
         {
             favButton.setText("Remove from Fav");
         }
+        if (Utilities.imageIsCached(movieDetails.getPoster_path()))
+        {
+            File posterP = new File(
+                    Environment.getExternalStorageDirectory().getPath()
+                            + Utilities.imageCacheFolder + movieDetails.getPoster_path());
+            File backdropP = new File(
+                    Environment.getExternalStorageDirectory().getPath()
+                            + Utilities.imageCacheFolder + movieDetails.getBackdrop_path());
+
+            Picasso.with(getContext()).load(posterP).into(mPosterView);
+            Picasso.with(getContext()).load(backdropP).into(mBackdropView);
+        }
+        else
+        {
+            Picasso.with(getContext()).load(ApiParams.BASE_IMG_URL + movieDetails.getBackdrop_path()).into(mBackdropView);
+            Picasso.with(getContext()).load(ApiParams.BASE_IMG_URL + movieDetails.getPoster_path()).into(mPosterView);
+        }
         favButton.setOnClickListener(this);
 
-        Picasso.with(getContext()).load(ApiParams.BASE_IMG_URL + movieDetails.getBackdrop_path()).into(mBackdropView);
-        Picasso.with(getContext()).load(ApiParams.BASE_IMG_URL + movieDetails.getPoster_path()).into(mPosterView);
         mTitleView.setText(movieDetails.getTitle());
         mRatingView.setText(formatRating(movieDetails));
         mPlotView.setText(movieDetails.getOverview());
         mReleaseDateView.setText(formatDate());
+
 
         new FetchDataTask().execute("videos");
         new FetchDataTask().execute("reviews");
@@ -295,7 +315,21 @@ public class MovieDetailFragment
             contentValues.put(MoviesContract.MovieEntry.MOVIE_VIDEO, movieDetails.getVideo());
             contentValues.put(MoviesContract.MovieEntry.MOVIE_GENRE_IDS, movieDetails.getGenre_ids().toString());
 
+            Log.i("IMAGE_DOWNLOAD", ApiParams.BASE_IMG_URL + movieDetails.getPoster_path());
 
+            // Cache file if not already cached
+            if (!Utilities.imageIsCached(movieDetails.getPoster_path()))
+            {
+                Picasso.with(getActivity()).load(ApiParams.BASE_IMG_URL + movieDetails.getPoster_path()).into(
+                        Utilities.getLocalTarget(movieDetails.getPoster_path()));
+            }
+            if (!Utilities.imageIsCached(movieDetails.getBackdrop_path()))
+            {
+                Picasso.with(getActivity()).load(ApiParams.BASE_IMG_URL + movieDetails.getBackdrop_path()).into(
+                        Utilities.getLocalTarget(movieDetails.getBackdrop_path())
+                );
+            }
+            // Insert into database
             Uri insertedUri = getContext().getContentResolver().insert(
                     MoviesContract.MovieEntry.CONTENT_URI,
                     contentValues
@@ -310,6 +344,7 @@ public class MovieDetailFragment
         }
         return;
     }
+
 
     /**
      * Called when a view has been clicked.

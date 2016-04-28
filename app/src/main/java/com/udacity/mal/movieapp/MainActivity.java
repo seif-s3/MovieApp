@@ -1,11 +1,16 @@
 package com.udacity.mal.movieapp;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import com.udacity.mal.movieapp.data.Movie;
@@ -21,6 +26,9 @@ public class MainActivity extends AppCompatActivity implements MovieChosenListen
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        checkPermissions();
+
         FrameLayout framePanel = (FrameLayout) findViewById(R.id.movie_details_pane);
         if (framePanel == null)
         {
@@ -50,19 +58,6 @@ public class MainActivity extends AppCompatActivity implements MovieChosenListen
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        int id = item.getItemId();
-        switch (id)
-        {
-            case R.id.action_settings:
-                // TODO: Launch
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void paneHandleItemClick(Movie m)
     {
         if (!mTwoPane)
@@ -82,6 +77,43 @@ public class MainActivity extends AppCompatActivity implements MovieChosenListen
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.movie_details_pane, detailFragment)
                     .commit();
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    public void checkPermissions()
+    {
+        if (this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("This app needs external storage access");
+            builder.setMessage("Please grant access so this app can cache images to file.");
+            builder.setPositiveButton(android.R.string.ok, null);
+            builder.setOnDismissListener(new DialogInterface.OnDismissListener()
+            {
+                @TargetApi(Build.VERSION_CODES.M)
+                public void onDismiss(DialogInterface dialog)
+                {
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                }
+            });
+            builder.show();
+        }
+        if (this.checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)
+        {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("This app needs Internet access");
+            builder.setMessage("Please grant access so this app can get movie details.");
+            builder.setPositiveButton(android.R.string.ok, null);
+            builder.setOnDismissListener(new DialogInterface.OnDismissListener()
+            {
+                @TargetApi(Build.VERSION_CODES.M)
+                public void onDismiss(DialogInterface dialog)
+                {
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                }
+            });
+            builder.show();
         }
     }
 }
