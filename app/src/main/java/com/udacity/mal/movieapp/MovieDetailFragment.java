@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.mal.movieapp.adapters.ReviewAdapter;
@@ -130,7 +131,7 @@ public class MovieDetailFragment
             @Override
             public void onClick(View v)
             {
-                //new FetchDataTask().execute("videos");
+                new FetchDataTask().execute("videos");
                 View dialogView = getActivity().getLayoutInflater().inflate(R.layout.trailers_dialog_view, null);
                 ListView lv = (ListView) dialogView.findViewById(R.id.dialogListView);
                 View emptyView = dialogView.findViewById(R.id.no_trailers_layout);
@@ -180,7 +181,7 @@ public class MovieDetailFragment
             @Override
             public void onClick(View v)
             {
-                //new FetchDataTask().execute("reviews");
+                new FetchDataTask().execute("reviews");
                 View dialogView = getActivity().getLayoutInflater().inflate(R.layout.review_dialog_view, null);
                 ListView lv = (ListView) dialogView.findViewById(R.id.dialogListView);
                 View emptyView = dialogView.findViewById(R.id.no_reviews_layout);
@@ -419,6 +420,12 @@ public class MovieDetailFragment
         }
 
         @Override
+        protected void onProgressUpdate(Void... values)
+        {
+            Toast.makeText(getActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
         protected Void doInBackground(String... params)
         {
             // Params might either be Popular or Top Rated
@@ -428,6 +435,12 @@ public class MovieDetailFragment
 
             if (params.length == 0)
             {
+                return null;
+            }
+            if (!Utilities.isInternetAvailable(getContext()))
+            {
+                Log.i("INTERNET", "No internet connection");
+                publishProgress();
                 return null;
             }
             String reqType = params[0];
