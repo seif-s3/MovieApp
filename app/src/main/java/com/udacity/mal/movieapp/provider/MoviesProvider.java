@@ -14,13 +14,13 @@ import android.support.annotation.Nullable;
 public class MoviesProvider extends ContentProvider
 {
 
-    public static final int MOVIES = 100;
-    public static final int FAV_MOVIES = 101;
+    private static final int MOVIES = 100;
+//    public static final int FAV_MOVIES = 101;
 
     private MoviesDbHelper mMoviesDbHelper;
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
-    static UriMatcher buildUriMatcher()
+    private static UriMatcher buildUriMatcher()
     {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = MoviesContract.CONTENT_AUTHORITY;

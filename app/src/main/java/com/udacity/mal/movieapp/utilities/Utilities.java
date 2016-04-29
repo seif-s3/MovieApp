@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
@@ -14,7 +16,6 @@ import com.udacity.mal.movieapp.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.net.InetAddress;
 
 /**
  * Created by Seif3 on 3/26/2016.
@@ -31,28 +32,14 @@ public class Utilities
         return new int[10];
     }
 
-    public static boolean isInternetAvailable()
+    public static boolean isInternetAvailable(Context ctx)
     {
-        try
-        {
-            InetAddress ipAddr = InetAddress.getByName("api.themoviedb.org");
-            Log.i("INTERNET_CONNECTION", ipAddr.toString());
-            if (ipAddr.equals(""))
-            {
-                Log.d("INTERNET_CONNECTION", "false");
-                return false;
-            }
-            else
-            {
-                Log.d("INTERNET_CONNECTION", "true");
-                return true;
-            }
+        ConnectivityManager cm =
+                (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        } catch (Exception e)
-        {
-            Log.d("INTERNET_CONNECTION", "false");
-            return false;
-        }
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
     }
 
     public static String imageCacheFolder = "/MovieApp Cache";
@@ -73,7 +60,7 @@ public class Utilities
 
     public static Target getLocalTarget(final String name)
     {
-        Target ret = new Target()
+        return new Target()
         {
             @Override
             public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from)
@@ -101,9 +88,9 @@ public class Utilities
                         try
                         {
                             file.createNewFile();
-                            FileOutputStream ostream = new FileOutputStream(file);
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
-                            ostream.close();
+                            FileOutputStream outStream = new FileOutputStream(file);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                            outStream.close();
                         } catch (Exception e)
                         {
                             e.printStackTrace();
@@ -129,7 +116,6 @@ public class Utilities
                 {
                     // Abort download if file already exists in cache.
                     Log.d("IMAGE_CACHE", "File already exists in cache");
-                    return;
                 }
             }
 
@@ -139,7 +125,6 @@ public class Utilities
                 Log.i("LOADING_IMAGE", "Prepare Load");
             }
         };
-        return ret;
     }
 
 
@@ -176,9 +161,9 @@ public class Utilities
         if (dir.isDirectory())
         {
             String[] children = dir.list();
-            for (int i = 0; i < children.length; i++)
+            for (String aChildren : children)
             {
-                new File(dir, children[i]).delete();
+                new File(dir, aChildren).delete();
             }
         }
     }

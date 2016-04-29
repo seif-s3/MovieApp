@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Author"
+        android:text="@string/review_author"
         android:textColor="#039BE5"
         android:id="@+id/review_author"
         android:padding="5dp"/>
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="This is an awesome review for a great movie!"
+        android:text="@string/review_dummy_text"
         android:id="@+id/review_content"
         android:padding="5dp"/>
 

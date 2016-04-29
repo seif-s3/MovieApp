@@ -3,7 +3,8 @@
               android:orientation="horizontal"
               android:padding="16dp"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:baselineAligned="false">
 
     <FrameLayout
         android:id="@+id/movie_selector_pane"

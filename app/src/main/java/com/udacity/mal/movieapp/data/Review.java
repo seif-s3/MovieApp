@@ -12,7 +12,7 @@ import org.json.JSONObject;
  */
 public class Review
 {
-    public static final String LOG_TAG = "REVIEW";
+    private static final String LOG_TAG = "REVIEW";
     private String id;
     private String content;
     private String author;
@@ -33,12 +33,8 @@ public class Review
         }
     }
 
-    public String getId()
-    {
-        return id;
-    }
 
-    public void setId(String id)
+    private void setId(String id)
     {
         this.id = id;
     }
@@ -48,7 +44,7 @@ public class Review
         return content;
     }
 
-    public void setContent(String content)
+    private void setContent(String content)
     {
         this.content = content;
     }
@@ -58,7 +54,7 @@ public class Review
         return author;
     }
 
-    public void setAuthor(String author)
+    private void setAuthor(String author)
     {
         this.author = author;
     }
@@ -68,7 +64,7 @@ public class Review
         return url;
     }
 
-    public void setUrl(String url)
+    private void setUrl(String url)
     {
         this.url = url;
     }

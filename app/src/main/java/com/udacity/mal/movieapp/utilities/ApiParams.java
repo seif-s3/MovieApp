@@ -5,7 +5,7 @@ package com.udacity.mal.movieapp.utilities;
  */
 public class ApiParams
 {
-    // TMDB API Params
+    // The Movie Database API Params
     public static final String API_KEY_PARAM = "api_key";
     public static final String API_KEY = "a6a5b3f1deac6542b9916ba6d06ad267";
     public static final String POPULAR_ENDPOINT = "movie/popular";

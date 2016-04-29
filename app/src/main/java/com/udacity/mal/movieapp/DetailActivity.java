@@ -22,7 +22,10 @@ public class DetailActivity extends AppCompatActivity
             mf.setArguments(extras);
             mf.setArguments(extras);
             Movie m = (Movie) extras.get("MOVIE");
-            getSupportActionBar().setTitle(m.getTitle());
+            if (m != null)
+            {
+                getSupportActionBar().setTitle(m.getTitle());
+            }
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.detail_container, mf)
                     .commit();

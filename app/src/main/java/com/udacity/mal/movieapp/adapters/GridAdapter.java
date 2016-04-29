@@ -26,16 +26,12 @@ import java.util.ArrayList;
 public class GridAdapter extends RecyclerView.Adapter<GridAdapter.PosterViewHolder>
 {
     private Context mContext;
-    public ArrayList<Movie> mMovies;
+    private ArrayList<Movie> mMovies;
 
     private MovieChosenListener mMovieListener;
 
-    public MovieChosenListener getmMovieListener()
-    {
-        return mMovieListener;
-    }
 
-    public void setmMovieListener(MovieChosenListener mMovieListener)
+    public void setMovieListener(MovieChosenListener mMovieListener)
     {
         this.mMovieListener = mMovieListener;
     }
@@ -48,17 +44,10 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.PosterViewHold
 
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView)
-    {
-        super.onAttachedToRecyclerView(recyclerView);
-    }
-
-    @Override
     public PosterViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.poster_layout, parent, false);
-        PosterViewHolder pvh = new PosterViewHolder(v);
-        return pvh;
+        return new PosterViewHolder(v);
     }
 
     @Override

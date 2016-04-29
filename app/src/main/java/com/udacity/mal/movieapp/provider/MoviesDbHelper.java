@@ -8,10 +8,10 @@ import android.provider.BaseColumns;
 /**
  * Created by Seif3 on 4/23/2016.
  */
-public class MoviesDbHelper extends SQLiteOpenHelper
+class MoviesDbHelper extends SQLiteOpenHelper
 {
-    public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "movies.db";
+    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "movies.db";
     private Context mContext;
 
     public MoviesDbHelper(Context context)

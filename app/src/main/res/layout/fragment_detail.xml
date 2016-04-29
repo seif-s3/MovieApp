@@ -18,6 +18,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/movie_detail_backdrop"
+                android:contentDescription="@string/movie_backdrop_image_content_description"
                 android:src="@drawable/placeholder_movie_details_image"
                 android:layout_gravity="center_vertical"
                 android:scaleType="centerCrop"
@@ -26,7 +27,7 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_weight="0.6">
 
                 <ImageView
@@ -34,7 +35,8 @@
                     android:layout_height="250dp"
                     android:id="@+id/movie_detail_poster"
                     android:src="@drawable/placeholder_movie_poster"
-                    android:padding="16dp"/>
+                    android:padding="16dp"
+                    android:contentDescription="@string/movie_poster_image_content_description"/>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -45,7 +47,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="Movie Title"
+                        android:text="@string/movie_title_dummy"
                         android:id="@+id/movie_detail_title"
                         android:padding="4dp"
                         android:layout_gravity="center_vertical"/>
@@ -54,7 +56,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Release Date"
+                        android:text="@string/release_date_dummy"
                         android:id="@+id/movie_release_date"
                         android:padding="4dp"
                         android:layout_gravity="center_vertical"/>
@@ -63,7 +65,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Rating"
+                        android:text="@string/rating_dummy"
                         android:id="@+id/movie_detail_rating"
                         android:padding="4dp"
                         android:layout_gravity="center_vertical"/>
@@ -71,7 +73,7 @@
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Add to Fav"
+                        android:text="@string/add_to_fav_dummy"
                         android:id="@+id/favButton"
                         android:layout_gravity="center_vertical"
                         />
@@ -89,7 +91,7 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Reviews"
+                    android:text="@string/reviews_button_text"
                     android:textSize="20sp"
                     android:textColor="@color/colorAccent"
                     android:padding="16dp"
@@ -101,7 +103,7 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Trailers"
+                    android:text="@string/trailers_button_text"
                     android:textSize="20sp"
                     android:textColor="@color/colorAccent"
                     android:padding="16dp"
@@ -122,7 +124,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Plot"
+                    android:text="@string/plot_dummy"
                     android:id="@+id/movie_detail_plot"
                     android:padding="4dp"/>
 

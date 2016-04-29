@@ -15,7 +15,7 @@ import org.json.JSONObject;
  */
 public class Movie implements Parcelable
 {
-    public static final String LOG_TAG = "MOVIE_CLASS";
+    private static final String LOG_TAG = "MOVIE_CLASS";
     private Integer id;
     private String overview;
     private String poster_path;
@@ -46,8 +46,8 @@ public class Movie implements Parcelable
         dest.writeString(this.original_title);
         dest.writeString(this.original_language);
         dest.writeDouble(this.popularity);
-        dest.writeByte((byte) (this.video == true ? 1 : 0));
-        dest.writeByte((byte) (this.adult == true ? 1 : 0));
+        dest.writeByte((byte) (this.video ? 1 : 0));
+        dest.writeByte((byte) (this.adult ? 1 : 0));
         dest.writeInt(this.vote_count);
     }
 
@@ -56,7 +56,7 @@ public class Movie implements Parcelable
     }
 
 
-    public Movie(Parcel in)
+    private Movie(Parcel in)
     {
         this.id = in.readInt();
         this.overview = in.readString();
@@ -177,9 +177,9 @@ public class Movie implements Parcelable
         return vote_average;
     }
 
-    public void setVote_average(Double vote_verage)
+    public void setVote_average(Double vote_average)
     {
-        this.vote_average = vote_verage;
+        this.vote_average = vote_average;
     }
 
     public int[] getGenre_ids()

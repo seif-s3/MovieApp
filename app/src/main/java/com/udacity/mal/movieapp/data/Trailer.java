@@ -12,7 +12,7 @@ import org.json.JSONObject;
  */
 public class Trailer
 {
-    public static final String LOG_TAG = "TRAILER";
+    private static final String LOG_TAG = "TRAILER";
 
     private String id;
     private String key;
@@ -43,12 +43,7 @@ public class Trailer
     }
 
 
-    public String getId()
-    {
-        return id;
-    }
-
-    public void setId(String id)
+    private void setId(String id)
     {
         this.id = id;
     }
@@ -58,7 +53,7 @@ public class Trailer
         return key;
     }
 
-    public void setKey(String key)
+    private void setKey(String key)
     {
         this.key = key;
     }
@@ -68,57 +63,32 @@ public class Trailer
         return name;
     }
 
-    public void setName(String name)
+    private void setName(String name)
     {
         this.name = name;
     }
 
-    public String getSite()
-    {
-        return site;
-    }
-
-    public void setSite(String site)
+    private void setSite(String site)
     {
         this.site = site;
     }
 
-    public String getType()
-    {
-        return type;
-    }
-
-    public void setType(String type)
+    private void setType(String type)
     {
         this.type = type;
     }
 
-    public int getSize()
-    {
-        return size;
-    }
-
-    public void setSize(int size)
+    private void setSize(int size)
     {
         this.size = size;
     }
 
-    public String getLang()
-    {
-        return lang;
-    }
-
-    public void setLang(String lang)
+    private void setLang(String lang)
     {
         this.lang = lang;
     }
 
-    public String getIso_3166_1()
-    {
-        return locale;
-    }
-
-    public void setLocale(String locale)
+    private void setLocale(String locale)
     {
         this.locale = locale;
     }

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Movie App</string>
 
-    <string name="action_clear_cache">Clear Image Cache</string>
+    <!--<string name="action_clear_cache">Clear Image Cache</string>-->
 
     <string-array name="sort_prefrences_array">
         <item>Most Popular</item>
@@ -24,4 +24,18 @@
 
     <string name="poster_content_description">Movie Poster Image</string>
     <string name="title_activity_detail">Movie Details</string>
+    <string name="movie_backdrop_image_content_description">Movie Backdrop Image</string>
+    <string name="movie_poster_image_content_description">Movie Poster Image</string>
+    <string name="trailer_play_button_content_description">Trailer Play Button</string>
+    <string name="share_trailer">Share Trailer</string>
+    <string name="review_author">Author</string>
+    <string name="review_dummy_text">This is an awesome review for a great movie!</string>
+    <string name="movie_title_dummy">Movie Title</string>
+    <string name="release_date_dummy">Release Date</string>
+    <string name="rating_dummy">Rating</string>
+    <string name="add_to_fav_dummy">Add to Fav</string>
+    <string name="reviews_button_text">Reviews</string>
+    <string name="trailers_button_text">Trailers</string>
+    <string name="plot_dummy">Plot</string>
+    <string name="remove_fav_button_text">Remove from Fav</string>
 </resources>

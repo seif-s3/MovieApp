@@ -48,6 +48,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class MovieDetailFragment
@@ -211,7 +212,7 @@ public class MovieDetailFragment
         favButton = (Button) rootView.findViewById(R.id.favButton);
         if (isFav)
         {
-            favButton.setText("Remove from Fav");
+            favButton.setText(R.string.remove_fav_button_text);
         }
         if (Utilities.imageIsCached(movieDetails.getPoster_path()))
         {
@@ -246,10 +247,8 @@ public class MovieDetailFragment
 
     private String formatRating(Movie m)
     {
-        StringBuilder sb = new StringBuilder();
-        sb.append(m.getVote_average());
-        sb.append("/10.0");
-        return sb.toString();
+        return String.valueOf(m.getVote_average()) +
+                "/10.0";
     }
 
     private String formatDate()
@@ -268,29 +267,31 @@ public class MovieDetailFragment
                 new String[]{movieDetails.getId().toString()},
                 null
         );
-        long movieId;
-        if (movieCursor.moveToFirst())
+        if (!movieCursor.moveToFirst())
         {
-            // Database already contains movie (i.e already favorited)
-            isFav = true;
+            movieCursor.close();
+            return;
         }
+        // Database already contains movie (i.e already favorite)
+        isFav = true;
+        movieCursor.close();
 
     }
 
-    public void addToFav()
+    private void addToFav()
     {
         long movieId;
         if (isFav)
         {
-            // Database already contains movie (i.e already favorited)
-            int rowsDelted = getContext().getContentResolver().delete(
+            // Database already contains movie (i.e already favorite)
+            int rowsDeleted = getContext().getContentResolver().delete(
                     MoviesContract.MovieEntry.CONTENT_URI,
                     MoviesContract.MovieEntry.MOVIE_ID + " = ?",
                     new String[]{movieDetails.getId().toString()}
             );
             isFav = false;
-            favButton.setText("Add to Fav");
-            if (rowsDelted > 0)
+            favButton.setText(R.string.add_to_fav_dummy);
+            if (rowsDeleted > 0)
             {
                 Snackbar.make(rootView, "Removed from favorites", Snackbar.LENGTH_SHORT).show();
             }
@@ -313,7 +314,7 @@ public class MovieDetailFragment
             contentValues.put(MoviesContract.MovieEntry.MOVIE_ORIGINAL_LANGUAGE, movieDetails.getOriginal_language());
             contentValues.put(MoviesContract.MovieEntry.MOVIE_ORIGINAL_TITLE, movieDetails.getOriginal_title());
             contentValues.put(MoviesContract.MovieEntry.MOVIE_VIDEO, movieDetails.getVideo());
-            contentValues.put(MoviesContract.MovieEntry.MOVIE_GENRE_IDS, movieDetails.getGenre_ids().toString());
+            contentValues.put(MoviesContract.MovieEntry.MOVIE_GENRE_IDS, Arrays.toString(movieDetails.getGenre_ids()));
 
             Log.i("IMAGE_DOWNLOAD", ApiParams.BASE_IMG_URL + movieDetails.getPoster_path());
 
@@ -339,10 +340,9 @@ public class MovieDetailFragment
             {
                 Snackbar.make(rootView, "Movie added to favorites", Snackbar.LENGTH_SHORT).show();
                 isFav = true;
-                favButton.setText("Remove from Fav");
+                favButton.setText(R.string.remove_fav_button_text);
             }
         }
-        return;
     }
 
 
@@ -362,10 +362,9 @@ public class MovieDetailFragment
 
     private class FetchDataTask extends AsyncTask<String, Void, Void>
     {
-        public static final String LOG_TAG = "FETCHMOVIES_TASK";
+        public static final String LOG_TAG = "FETCH_MOVIES_TASK";
 
         public void parseTrailerJson(String json)
-                throws JSONException
         {
             try
             {
@@ -385,7 +384,6 @@ public class MovieDetailFragment
         }
 
         public void parseReviewJson(String json)
-                throws JSONException
         {
             try
             {
@@ -441,7 +439,7 @@ public class MovieDetailFragment
 
                 // Read the input stream into a String
                 InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 if (inputStream == null)
                 {
                     return null;
@@ -451,7 +449,7 @@ public class MovieDetailFragment
                 String line;
                 while ((line = reader.readLine()) != null)
                 {
-                    buffer.append(line + "\n");
+                    buffer.append(line).append("\n");
                 }
 
                 if (buffer.length() == 0)
@@ -460,7 +458,7 @@ public class MovieDetailFragment
                     return null;
                 }
                 moviesJsonStr = buffer.toString();
-                Log.v(LOG_TAG, moviesJsonStr.toString());
+                Log.v(LOG_TAG, moviesJsonStr);
 
                 if (reqType.equals("videos"))
                 {
@@ -501,6 +499,7 @@ public class MovieDetailFragment
         {
             mTrailerAdapter.notifyDataSetChanged();
             mReviewsAdapter.notifyDataSetChanged();
+            getActivity().invalidateOptionsMenu();
         }
     }
 }

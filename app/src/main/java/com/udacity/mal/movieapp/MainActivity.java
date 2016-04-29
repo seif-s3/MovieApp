@@ -18,8 +18,8 @@ import com.udacity.mal.movieapp.interfaces.MovieChosenListener;
 
 public class MainActivity extends AppCompatActivity implements MovieChosenListener
 {
-    public static String LOG_TAG = "MAIN";
-    public boolean mTwoPane;
+    private static String LOG_TAG = "MAIN";
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements MovieChosenListen
             Bundle extras = new Bundle();
             extras.putParcelable("MOVIE", m);
             detailFragment.setArguments(extras);
-
+            invalidateOptionsMenu();
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.movie_details_pane, detailFragment)
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements MovieChosenListen
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    public void checkPermissions()
+    private void checkPermissions()
     {
         if (this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
         {
@@ -115,5 +115,22 @@ public class MainActivity extends AppCompatActivity implements MovieChosenListen
             });
             builder.show();
         }
+        if (this.checkSelfPermission(Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED)
+        {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("This app needs Network State access");
+            builder.setMessage("Please grant access so this app can check whether your device is connected to the internet.");
+            builder.setPositiveButton(android.R.string.ok, null);
+            builder.setOnDismissListener(new DialogInterface.OnDismissListener()
+            {
+                @TargetApi(Build.VERSION_CODES.M)
+                public void onDismiss(DialogInterface dialog)
+                {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_NETWORK_STATE}, 1);
+                }
+            });
+            builder.show();
+        }
+
     }
 }

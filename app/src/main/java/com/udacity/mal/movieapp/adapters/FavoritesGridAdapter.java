@@ -1,7 +1,6 @@
 package com.udacity.mal.movieapp.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Environment;
@@ -15,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.udacity.mal.movieapp.DetailActivity;
 import com.udacity.mal.movieapp.R;
 import com.udacity.mal.movieapp.data.Movie;
 import com.udacity.mal.movieapp.interfaces.MovieChosenListener;
@@ -32,10 +30,6 @@ public class FavoritesGridAdapter extends CursorRecyclerViewAdapter<FavoritesGri
 
     private MovieChosenListener movieChosenListener;
 
-    public MovieChosenListener getMovieChosenListener()
-    {
-        return movieChosenListener;
-    }
 
     public void setMovieChosenListener(MovieChosenListener movieChosenListener)
     {
@@ -47,18 +41,12 @@ public class FavoritesGridAdapter extends CursorRecyclerViewAdapter<FavoritesGri
         super(context, cursor);
     }
 
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView)
-    {
-        super.onAttachedToRecyclerView(recyclerView);
-    }
 
     @Override
     public PosterViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.poster_layout, parent, false);
-        PosterViewHolder pvh = new PosterViewHolder(v);
-        return pvh;
+        return new PosterViewHolder(v);
     }
 
 //    @Override
@@ -145,7 +133,6 @@ public class FavoritesGridAdapter extends CursorRecyclerViewAdapter<FavoritesGri
 
                 }
 
-                Intent detail = new Intent(mContext, DetailActivity.class);
                 Movie temp = new Movie();
                 temp.setId(movieCursor.getInt(id_col));
                 temp.setTitle(movieCursor.getString(title_col));
@@ -157,8 +144,8 @@ public class FavoritesGridAdapter extends CursorRecyclerViewAdapter<FavoritesGri
                 temp.setBackdrop_path(movieCursor.getString(backdrop_path_col));
                 temp.setOriginal_language(movieCursor.getString(original_language_col));
                 temp.setOriginal_title(movieCursor.getString(original_title_col));
-                temp.setAdult(movieCursor.getInt(adult_col) == 1 ? true : false);
-                temp.setVideo(movieCursor.getInt(video_col) == 1 ? true : false);
+                temp.setAdult(movieCursor.getInt(adult_col) == 1);
+                temp.setVideo(movieCursor.getInt(video_col) == 1);
                 temp.setGenre_ids(Utilities.parseGenres(movieCursor.getString(genre_col)));
                 temp.setVote_average(movieCursor.getDouble(vote_avg_col));
 

@@ -19,7 +19,7 @@ public class TrailerAdapter extends BaseAdapter
 {
     private ArrayList<Trailer> mTrailers;
     private Context mContext;
-    LayoutInflater layoutInflater;
+    private LayoutInflater layoutInflater;
 
     public TrailerAdapter(Context ctx, ArrayList<Trailer> data)
     {

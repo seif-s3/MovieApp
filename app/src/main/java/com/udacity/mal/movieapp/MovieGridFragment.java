@@ -48,7 +48,7 @@ public class MovieGridFragment
         implements AdapterView.OnItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor>
 {
     public static final String LOG_TAG = "MOVIE_GRID_FRAGMENT";
-    public static final int FAV_LOADER = 0;
+    private static final int FAV_LOADER = 0;
     private GridAdapter mGridAdapter;
     private FavoritesGridAdapter mFavGridAdapter;
     private ArrayList<Movie> mMovieList = new ArrayList<>();
@@ -74,8 +74,7 @@ public class MovieGridFragment
     }
 
 
-
-    public void refreshMovieList(String sortOrder)
+    private void refreshMovieList(String sortOrder)
     {
         if (sortOrder.equals(getString(R.string.fav_only_key)))
         {
@@ -178,7 +177,7 @@ public class MovieGridFragment
 
         // Initialize Recycler View
         mGridAdapter = new GridAdapter(getContext(), mMovieList);
-        mGridAdapter.setmMovieListener((MovieChosenListener) getActivity());
+        mGridAdapter.setMovieListener((MovieChosenListener) getActivity());
 
         mFavGridAdapter = new FavoritesGridAdapter(getContext(), null);
         mFavGridAdapter.setMovieChosenListener((MovieChosenListener) getActivity());
@@ -208,30 +207,29 @@ public class MovieGridFragment
     {
         String sortBy = (String) parent.getItemAtPosition(position);
         Log.i("SpinnerItemSelected", sortBy);
-        if (sortBy.equals("Top Rated"))
+        switch (sortBy)
         {
-            // TODO: Refactor Keys and Values from R.string to Static class variables
-            editor.putString(getString(R.string.sort_order_shared_pref_key), getString(R.string.top_rated_key));
-            editor.putInt(getString(R.string.spinner_position_shared_pref_key), 1);
-            //editor.putInt(getString(R.string.poster_grid_position_shared_pref_key), 0); // Reset Grid to 0
-            editor.commit();
-            refreshMovieList(getString(R.string.top_rated_key));
-        }
-        else if (sortBy.equals("Most Popular"))
-        {
-            editor.putString(getString(R.string.sort_order_shared_pref_key), getString(R.string.most_popular_key));
-            editor.putInt(getString(R.string.spinner_position_shared_pref_key), 0);
-            //editor.putInt(getString(R.string.poster_grid_position_shared_pref_key), 0); // Reset Grid to 0
-            editor.commit();
-            refreshMovieList(getString(R.string.most_popular_key));
-        }
-        else if (sortBy.equals("Favorites"))
-        {
-            editor.putString(getString(R.string.sort_order_shared_pref_key), getString(R.string.fav_only_key));
-            editor.putInt(getString(R.string.spinner_position_shared_pref_key), 2);
-            //editor.putInt(getString(R.string.poster_grid_position_shared_pref_key), 0); // Reset Grid to 0
-            editor.commit();
-            refreshMovieList(getString(R.string.fav_only_key));
+            case "Top Rated":
+                editor.putString(getString(R.string.sort_order_shared_pref_key), getString(R.string.top_rated_key));
+                editor.putInt(getString(R.string.spinner_position_shared_pref_key), 1);
+                //editor.putInt(getString(R.string.poster_grid_position_shared_pref_key), 0); // Reset Grid to 0
+                editor.commit();
+                refreshMovieList(getString(R.string.top_rated_key));
+                break;
+            case "Most Popular":
+                editor.putString(getString(R.string.sort_order_shared_pref_key), getString(R.string.most_popular_key));
+                editor.putInt(getString(R.string.spinner_position_shared_pref_key), 0);
+                //editor.putInt(getString(R.string.poster_grid_position_shared_pref_key), 0); // Reset Grid to 0
+                editor.commit();
+                refreshMovieList(getString(R.string.most_popular_key));
+                break;
+            case "Favorites":
+                editor.putString(getString(R.string.sort_order_shared_pref_key), getString(R.string.fav_only_key));
+                editor.putInt(getString(R.string.spinner_position_shared_pref_key), 2);
+                //editor.putInt(getString(R.string.poster_grid_position_shared_pref_key), 0); // Reset Grid to 0
+                editor.commit();
+                refreshMovieList(getString(R.string.fav_only_key));
+                break;
         }
     }
 
@@ -278,10 +276,9 @@ public class MovieGridFragment
 
     private class FetchMoviesTask extends AsyncTask<String, Void, Void>
     {
-        public static final String LOG_TAG = "FETCHMOVIES_TASK";
+        public static final String LOG_TAG = "FETCH_MOVIES_TASK";
 
         public void parseMovieJson(String json)
-                throws JSONException
         {
             try
             {
@@ -321,7 +318,7 @@ public class MovieGridFragment
             {
                 return null;
             }
-            if (!Utilities.isInternetAvailable())
+            if (!Utilities.isInternetAvailable(getContext()))
             {
                 Log.i("INTERNET", "No internet connection");
                 publishProgress();
@@ -336,7 +333,7 @@ public class MovieGridFragment
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
-            String moviesJsonStr = null;
+            String moviesJsonStr;
 
             try
             {
@@ -352,7 +349,7 @@ public class MovieGridFragment
 
                 // Read the input stream into a String
                 InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 if (inputStream == null)
                 {
                     return null;
@@ -362,7 +359,7 @@ public class MovieGridFragment
                 String line;
                 while ((line = reader.readLine()) != null)
                 {
-                    buffer.append(line + "\n");
+                    buffer.append(line).append("\n");
                 }
 
                 if (buffer.length() == 0)
@@ -371,7 +368,7 @@ public class MovieGridFragment
                     return null;
                 }
                 moviesJsonStr = buffer.toString();
-                Log.v(LOG_TAG, moviesJsonStr.toString());
+                Log.v(LOG_TAG, moviesJsonStr);
 
                 parseMovieJson(moviesJsonStr);
             } catch (Exception e)

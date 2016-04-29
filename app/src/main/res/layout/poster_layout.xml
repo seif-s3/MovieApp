@@ -47,7 +47,7 @@
                 android:lineSpacingMultiplier="1.1"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="Movie Title"
+                android:text="@string/movie_title_dummy"
                 android:textSize="18sp"
                 />
 
@@ -59,7 +59,7 @@
                 android:ellipsize="end"
                 android:lineSpacingMultiplier="1.1"
                 android:lines="1"
-                android:text="Release Date"/>
+                android:text="@string/release_date_dummy"/>
 
         </LinearLayout>
 
