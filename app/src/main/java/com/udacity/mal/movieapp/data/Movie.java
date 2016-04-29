@@ -12,6 +12,9 @@ import org.json.JSONObject;
 
 /**
  * Created by Seif3 on 3/25/2016.
+ * This project was created for the
+ * Udacity Developing Android Apps
+ * course project.
  */
 public class Movie implements Parcelable
 {

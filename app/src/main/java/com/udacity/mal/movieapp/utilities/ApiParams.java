@@ -2,6 +2,9 @@ package com.udacity.mal.movieapp.utilities;
 
 /**
  * Created by Seif3 on 3/25/2016.
+ * This project was created for the
+ * Udacity Developing Android Apps
+ * course project.
  */
 public class ApiParams
 {

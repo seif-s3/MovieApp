@@ -6,6 +6,9 @@ import android.provider.BaseColumns;
 
 /**
  * Created by Seif3 on 4/23/2016.
+ * This project was created for the
+ * Udacity Developing Android Apps
+ * course project.
  */
 public class MoviesContract
 {

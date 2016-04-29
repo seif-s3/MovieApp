@@ -371,7 +371,7 @@ public class MovieGridFragment
                 Log.v(LOG_TAG, moviesJsonStr);
 
                 parseMovieJson(moviesJsonStr);
-            } catch (Exception e)
+            } catch (IOException e)
             {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();

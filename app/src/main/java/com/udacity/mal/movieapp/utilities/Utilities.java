@@ -16,9 +16,13 @@ import com.udacity.mal.movieapp.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Created by Seif3 on 3/26/2016.
+ * This project was created for the
+ * Udacity Developing Android Apps
+ * course project.
  */
 
 /*
@@ -91,7 +95,7 @@ public class Utilities
                             FileOutputStream outStream = new FileOutputStream(file);
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
                             outStream.close();
-                        } catch (Exception e)
+                        } catch (IOException e)
                         {
                             e.printStackTrace();
                         }

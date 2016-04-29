@@ -21,8 +21,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -128,6 +130,21 @@ public class MovieDetailFragment
             @Override
             public void onClick(View v)
             {
+                //new FetchDataTask().execute("videos");
+                View dialogView = getActivity().getLayoutInflater().inflate(R.layout.trailers_dialog_view, null);
+                ListView lv = (ListView) dialogView.findViewById(R.id.dialogListView);
+                View emptyView = dialogView.findViewById(R.id.no_trailers_layout);
+                lv.setEmptyView(emptyView);
+                lv.setAdapter(mTrailerAdapter);
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                    {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" +
+                                mTrailers.get(position).getKey())));
+                    }
+                });
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Trailers");
                 builder.setNegativeButton(
@@ -140,16 +157,8 @@ public class MovieDetailFragment
                                 dialog.dismiss();
                             }
                         });
-                builder.setAdapter(mTrailerAdapter,
-                        new DialogInterface.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" +
-                                        mTrailers.get(which).getKey())));
-                            }
-                        });
+
+                builder.setView(dialogView);
                 builder.show();
             }
         });
@@ -171,6 +180,12 @@ public class MovieDetailFragment
             @Override
             public void onClick(View v)
             {
+                //new FetchDataTask().execute("reviews");
+                View dialogView = getActivity().getLayoutInflater().inflate(R.layout.review_dialog_view, null);
+                ListView lv = (ListView) dialogView.findViewById(R.id.dialogListView);
+                View emptyView = dialogView.findViewById(R.id.no_reviews_layout);
+                lv.setEmptyView(emptyView);
+                lv.setAdapter(mReviewsAdapter);
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Reviews");
                 builder.setNegativeButton(
@@ -183,15 +198,16 @@ public class MovieDetailFragment
                                 dialog.dismiss();
                             }
                         });
-                builder.setAdapter(mReviewsAdapter,
-                        new DialogInterface.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mReviews.get(which).getUrl())));
-                            }
-                        });
+//                builder.setAdapter(mReviewsAdapter,
+//                        new DialogInterface.OnClickListener()
+//                        {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which)
+//                            {
+//                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mReviews.get(which).getUrl())));
+//                            }
+//                        });
+                builder.setView(dialogView);
                 builder.show();
             }
         });

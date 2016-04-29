@@ -10,6 +10,9 @@ import android.support.annotation.Nullable;
 
 /**
  * Created by Seif3 on 4/23/2016.
+ * This project was created for the
+ * Udacity Developing Android Apps
+ * course project.
  */
 public class MoviesProvider extends ContentProvider
 {

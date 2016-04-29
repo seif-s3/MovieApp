@@ -22,6 +22,9 @@ import java.util.ArrayList;
 
 /**
  * Created by Seif3 on 3/25/2016.
+ * This project was created for the
+ * Udacity Developing Android Apps
+ * course project.
  */
 public class GridAdapter extends RecyclerView.Adapter<GridAdapter.PosterViewHolder>
 {

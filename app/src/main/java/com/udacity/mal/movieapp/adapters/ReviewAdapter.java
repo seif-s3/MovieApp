@@ -14,12 +14,17 @@ import java.util.ArrayList;
 
 /**
  * Created by Seif3 on 4/26/2016.
+ * This project was created for the
+ * Udacity Developing Android Apps
+ * course project.
  */
 public class ReviewAdapter extends BaseAdapter
 {
     private ArrayList<Review> mReviews;
     private Context mContext;
     private LayoutInflater layoutInflater;
+    private static final int NO_REVIEWS_VIEW_TYPE = 0;
+    private static final int DEFAULT_REVIEWS_VIEW_TYPE = 1;
 
     public ReviewAdapter(Context context, ArrayList<Review> objects)
     {
@@ -28,13 +33,11 @@ public class ReviewAdapter extends BaseAdapter
         layoutInflater = LayoutInflater.from(mContext);
     }
 
-
     @Override
     public int getCount()
     {
         return mReviews.size();
     }
-
 
     @Override
     public Object getItem(int position)
@@ -52,6 +55,11 @@ public class ReviewAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
+        if (mReviews.get(position) == null)
+        {
+            convertView = layoutInflater.inflate(R.layout.no_reviews_layout, null);
+            return convertView;
+        }
         convertView = layoutInflater.inflate(R.layout.review_list_item, null);
         TextView reviewAuthor = (TextView) convertView.findViewById(R.id.review_author);
         TextView reviewContent = (TextView) convertView.findViewById(R.id.review_content);

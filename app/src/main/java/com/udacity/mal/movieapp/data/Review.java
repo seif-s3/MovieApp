@@ -9,6 +9,9 @@ import org.json.JSONObject;
 
 /**
  * Created by Seif3 on 4/26/2016.
+ * This project was created for the
+ * Udacity Developing Android Apps
+ * course project.
  */
 public class Review
 {
