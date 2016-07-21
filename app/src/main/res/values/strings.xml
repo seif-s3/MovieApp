@@ -38,4 +38,8 @@
     <string name="trailers_button_text">Trailers</string>
     <string name="plot_dummy">Plot</string>
     <string name="remove_fav_button_text">Remove from Fav</string>
+    <string name="content_description_sad_face_trailers">Sad Face, Trailers unavailable</string>
+    <string name="trailers_unavailable">Trailers Unavailable</string>
+    <string name="reviews_unavailable">Reviews Unavailable</string>
+    <string name="content_descriotion_sad_face_reviews">Sad Face, No Reviews Found!</string>
 </resources>
