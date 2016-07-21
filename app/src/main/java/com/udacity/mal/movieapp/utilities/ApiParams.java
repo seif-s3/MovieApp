@@ -10,7 +10,8 @@ public class ApiParams
 {
     // The Movie Database API Params
     public static final String API_KEY_PARAM = "api_key";
-    public static final String API_KEY = "a6a5b3f1deac6542b9916ba6d06ad267";
+    // TODO: Add API Key here
+    public static final String API_KEY = "";
     public static final String POPULAR_ENDPOINT = "movie/popular";
     public static final String TOP_RATED_ENDPOINT = "movie/top_rated";
     public static final String MOVIE_ENDPOINT = "movie";
